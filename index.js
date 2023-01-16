@@ -345,7 +345,6 @@ class Fetcher extends EventEmitter {
         if (this._isError(response)) return reject(new Error(response.statusCode + ': ' + response.statusMessage))
         payload.expires_at = Date.now() + (payload.expires_in * 1000)
         this.setSesssion(payload)
-        this.setSesssion(payload)
         return resolve(payload)
       })
     })
