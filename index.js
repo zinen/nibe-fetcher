@@ -370,7 +370,7 @@ class Fetcher extends EventEmitter {
         if (error) return reject(error)
         if (this._isError(response)) return reject(new Error(response.statusCode + ': ' + response.statusMessage))
         payload.expires_at = Date.now() + (payload.expires_in * 1000)
-        this.config.set(payload)
+        this.setSesssion(payload)
         return resolve(payload)
       })
     })
@@ -454,7 +454,7 @@ class Fetcher extends EventEmitter {
   }
 
   _isTokenExpired () {
-    return (this.getSession('expires_at') || 0) < (Date.now() + this.renewBeforeExpiry)
+    return (this.getSession('expires_at') || 0) < (Date.now() + this.options.renewBeforeExpiry)
   }
 
   _hasRefreshToken () {
