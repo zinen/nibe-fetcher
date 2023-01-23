@@ -1,6 +1,8 @@
 # nibe-fetcher-promise
+[![Platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
+[![NPM Total Downloads](https://img.shields.io/npm/dt/nibe-fetcher-promise.svg)](https://www.npmjs.com/package/nibe-fetcher-promise)
 
-This is a fork of [nibe-fetcher](https://github.com/z0mt3c/nibe-fetcher). 
+This is a fork of [nibe-fetcher](https://github.com/z0mt3c/nibe-fetcher) by [z0mt3c](https://github.com/z0mt3c). 
 
 This fork aims for zero dependencies(node native modules) and promise based to work with NIBE uplink API v1. 
 
@@ -10,7 +12,7 @@ Install
 ```
 npm install nibe-fetcher-promise
 ```
-## Functions:
+## Functions
 More info about what the calls new to contain can be found here. https://api.nibeuplink.com/docs/v1/Functions
 
 ### getURLPath(path,queryParameters)
