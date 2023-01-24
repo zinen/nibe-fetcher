@@ -15,6 +15,16 @@ npm install nibe-fetcher-promise
 ## Functions
 More info about what the calls new to contain can be found here. https://api.nibeuplink.com/docs/v1/Functions
 
+### getSystems()
+*Gets you list of systems connected to your user*
+
+Returns a Promise. Resolving to `{..., objects: [each of your systems]}`
+
+### getAllParameters()
+*Gets you all parameters that can be retrieved for your system*
+
+Returns a Promise. Resolving to `{parameter_key:{... values },parameter_key...}`
+
 ### getURLPath(path,queryParameters)
 *Generic GET request containing authorization*
 
@@ -26,7 +36,7 @@ E.g. for systemID 54654:
 
 ``getURLPath(`/api/v1/systems/{systemId}/serviceinfo/categories`,{systemId:54654, systemUnitId: 0, parameters:true})``
 
-Returns a Promise
+Returns a Promise. Resolving to an object containing the response.
 ### putURLPath(path,queryParameters,body={})
 **This PUT function has not been tested successful yet but should in theory work**
 
@@ -40,7 +50,7 @@ E.g. for systemID 54654 telling outside temperature is 23°C:
 
 ``putURLPath(`api/v1/systems/54654/parameters`,{systemId:54654},{settings: {40067: 230}})``
 
-Returns a Promise
+Returns a Promise. Resolving to an object containing the response.
 
 # Examples
 To help with an easy start
@@ -69,7 +79,7 @@ async function start() {
     // Returns: {..., objects: [each of your systems]}
     const allParameters = await nibeuplinkClient.getAllParameters()
     // console.log(allParameters)
-    // Returns: {parameter_key:{... values }}
+    // Returns: {parameter_key:{... values },parameter_key...}
     fs.writeFile(Path.join(__dirname, './.parameters.json'), JSON.stringify(allParameters, null, 2))
 
   } catch (error) {

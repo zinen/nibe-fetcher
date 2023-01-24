@@ -242,7 +242,7 @@ class NibeuplinkClient {
     payload.forEach(element => {
       const category = element.categoryId
       element.parameters.forEach(parameter => {
-        const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g,'').replaceAll(' ','_').toLowerCase()
+        const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g,'').replace(/\s/g,'_').toLowerCase()
         delete parameter.title
         delete parameter.name
         if (parameter.unit.length) parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length))
