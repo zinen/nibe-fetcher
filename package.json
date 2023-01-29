@@ -19,5 +19,6 @@
   },
   "bugs": {
     "url": "https://github.com/zinen/node-nibe-fetcher-promise/issues"
-  }
+  },
+  "files": ["index.js"]
 }
