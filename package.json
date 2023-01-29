@@ -1,8 +1,9 @@
 {
   "name": "nibe-fetcher-promise",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "main": "index.js",
   "scripts": {
+    "dev": "node ./develop/test.js"
   },
   "author": "zinen",
   "license": "MIT",

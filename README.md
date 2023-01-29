@@ -15,6 +15,25 @@ npm install nibe-fetcher-promise
 ## Functions
 More info about what the calls new to contain can be found here. https://api.nibeuplink.com/docs/v1/Functions
 
+### new in class
+
+```js
+const nibeuplinkClient = new NibeuplinkClient({
+  clientId:'x',
+  clientSecret:'x',
+  authCode:'x',
+  sessionStore: Path.join(__dirname, './.session.json'), // Default session data stored in a file at the modules root dir
+  scope: 'READSYSTEM' // Or 'READSYSTEM WRITESYSTEM'
+})
+
+```
+
+### clearSession()
+*Continuously resource problems? Try clearing the store session details from storage*
+
+`nibeuplinkClient.clearSession()`
+
+Returns nothing
 ### getSystems()
 *Gets you list of systems connected to your user*
 

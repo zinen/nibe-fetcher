@@ -9,7 +9,7 @@ class NibeuplinkClient {
   #init = false
   requestQueueActive = false
   requestQueue = 0
-  
+
   // Define default options
   options = {
     debug: 0,
@@ -27,8 +27,14 @@ class NibeuplinkClient {
       ...this.options,
       ...options
     }
+    let faultText = ''
+    if (!this.options.clientId) faultText += 'clientId is missing from options. Add clientId to continue. '
+    if (!this.options.clientSecret) faultText += 'clientSecret is missing from options. Add clientSecret to continue. '
+    if (this.options.systemId && isNaN(Number(this.options.systemId))) faultText += 'systemId must be a number. Replace systemId with a number. '
+    if (this.options.authCode && this.options.authCode.length < 380) faultText += 'authCode seems too short. Try a new authCode. '
+    if (faultText.length > 0) throw new Error(faultText)
   }
-  promiseTimeout(delay){
+  promiseTimeout(delay) {
     if (this.options.debug) console.log('promiseTimeout called waiting for', delay, 'ms, waiting requests:', this.requestQueue)
     return new Promise(resolve => setTimeout(resolve, delay));
   }
@@ -55,10 +61,27 @@ class NibeuplinkClient {
     fs.writeFile(this.options.sessionStore, JSON.stringify(auth))
   }
 
-  requestQueueing(changeInt, changeBool) {
-    if (changeInt != null) this.requestQueue += changeInt
-    if (changeBool != undefined) this.requestQueueActive = changeBool
-    if (this.options.debug) console.log(`Queue: ${this.requestQueueActive ? 'active' : 'non-active'}, in queue: ${this.requestQueue}`)
+  async clearSession() {
+    this.#auth = undefined
+    this.#init = false
+    fs.writeFile(this.options.sessionStore, "{}")
+  }
+
+  async requestQueueing(event) {
+    if (event == 'wait') {
+      this.requestQueue++
+    } else if (event == 'end') {
+      this.requestQueueActive = false
+      return
+    } else {
+      throw new Error(`Error in requestQueueing handling. event=${event} should be wait or end`)
+    }
+    while (this.requestQueueActive) {
+      if (this.options.debug) console.log(`Queue: ${this.requestQueueActive ? 'active' : 'non-active'}, in queue: ${this.requestQueue}`)
+      await this.promiseTimeout(250)
+    }
+    this.requestQueue--
+    this.requestQueueActive = true
   }
 
   getNewAccessToken() {
@@ -81,11 +104,7 @@ class NibeuplinkClient {
         path: '/oauth/token',
         method: 'POST',
       }
-      self.requestQueueing(1)
-      while (self.requestQueueActive) {
-        await self.promiseTimeout(250)
-      }
-      self.requestQueueing(null, true)
+      await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = '';
         if (res.statusCode != 200) {
@@ -95,7 +114,7 @@ class NibeuplinkClient {
           rawData += chunk
         });
         res.on('end', () => {
-          self.requestQueueing(-1, false)
+          self.requestQueueing('end')
           // Incoming:
           // {
           //   "access_token":[ACCESS_TOKEN],
@@ -116,7 +135,7 @@ class NibeuplinkClient {
           resolve(response)
         });
       }).on('error', err => {
-        self.requestQueueing(-1, false)
+        self.requestQueueing('end')
         reject(err)
       });
       request.end(postData)
@@ -142,21 +161,17 @@ class NibeuplinkClient {
         path: '/oauth/token',
         method: 'POST',
       }
-      self.requestQueueing(1)
-      while (self.requestQueueActive) {
-        await self.promiseTimeout(250)
-      }
-      self.requestQueueing(null, true)
+      await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = '';
         if (res.statusCode != 200) {
-          reject('Error in response from API. The one time use of authCode might be used already')
+          reject('Error in response from API. Refresh token might have expired.')
         }
         res.on('data', chunk => {
           rawData += chunk
         });
         res.on('end', () => {
-          self.requestQueueing(-1, false)
+          self.requestQueueing('end')
           // Incoming:
           // {
           //   "access_token":[ACCESS_TOKEN],
@@ -175,14 +190,14 @@ class NibeuplinkClient {
           resolve(response)
         });
       }).on('error', err => {
-        self.requestQueueing(-1, false)
+        self.requestQueueing('end')
         reject(err)
       });
       request.end(postData)
     })
   }
 
-  async getURLPath(inputPath, queryParameters, skipInitCheck=false) {
+  async getURLPath(inputPath, queryParameters, skipInitCheck = false) {
     if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
     if (inputPath[0] != '/') { inputPath = '/' + inputPath }
     if (queryParameters) {
@@ -200,19 +215,19 @@ class NibeuplinkClient {
         path: inputPath,
         method: 'GET',
       }
-      self.requestQueueing(1)
-      while (self.requestQueueActive) {
-        await self.promiseTimeout(250)
-      }
-      self.requestQueueing(null, true)
+      await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = '';
         if (res.statusCode != 200) {
           let errorText = 'Access token might have expired'
-          if (res.statusCode == 401) {
+          if (res.statusCode == 400) {
+            reject('Request content from client not accepted by server')
+          } else if (res.statusCode == 401) {
             reject('Unauthorized')
+          } else if (res.statusCode == 403) {
+            reject('Not authorized for action')
           } else if (res.statusCode == 404) {
-            errorText = 'Requested parameter not found'
+            reject('Requested parameter not found')
           }
           reject(`${res.statusCode} Error in response from API url inputPath ${inputPath}. ${errorText}`)
         }
@@ -220,73 +235,79 @@ class NibeuplinkClient {
           rawData += chunk
         });
         res.on('end', () => {
-          self.requestQueueing(-1, false)
+          self.requestQueueing('end')
           resolve(JSON.parse(rawData))
         });
       }).on('error', err => {
-        self.requestQueueing(-1, false)
+        self.requestQueueing('end')
         reject(err)
       });
       request.end()
     })
   }
 
-  async getSystems(skipInitCheck=false) {
-    const payload = await this.getURLPath('/api/v1/systems',null, skipInitCheck)
+  async getSystems(skipInitCheck = false) {
+    const payload = await this.getURLPath('/api/v1/systems', null, skipInitCheck)
     if (!this.options.systemId) this.options.systemId = payload.objects[0].systemId
     return payload
   }
   async getAllParameters() {
-    const payload = await this.getURLPath(`api/v1/systems/${this.options.systemId}/serviceinfo/categories`,{systemId:this.options.systemId, systemUnitId: 0, parameters:true})
+    const payload = await this.getURLPath(`api/v1/systems/${this.options.systemId}/serviceinfo/categories`, { parameters: true })
     const data = {}
+    const PARAMETERS_TO_FIX = [40079, 40081, 40083]
     payload.forEach(element => {
       const category = element.categoryId
       element.parameters.forEach(parameter => {
-        const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g,'').replace(/\s/g,'_').toLowerCase()
+        if (PARAMETERS_TO_FIX.includes(parameter.parameterId)) parameter.title += ' ' + parameter.designation
+        const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g, '').replace(/\s/g, '_').toLowerCase()
         delete parameter.title
         delete parameter.name
-        if (parameter.unit.length) parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length))
+        if (parameter.unit.length) { parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length)) }
+        else if (parseFloat(parameter.displayValue)) { parameter.value = parseFloat(parameter.displayValue) }
+        else { parameter.value = parameter.rawValue }
         data[key] = parameter
       })
     })
     return data
   }
 
-  async putURLPath(inputPath, queryParameters, body = {}, skipInitCheck=false) {
+  async putURLPath(inputPath, queryParameters, body = {}, skipInitCheck = false) {
     if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
-    if (!this.#init || new Date() > new Date(await this.getSession('expires_at'))) await this.init()
     if (inputPath[0] != '/') { inputPath = '/' + inputPath }
-    const queryString = querystring.stringify(queryParameters)
-    const pathRequest = inputPath + '?' + queryString
-    if (this.options.debug) console.log('PUT ' + pathRequest)
-    if (this.options.debug) console.log('PUT BODY ' + JSON.stringify(body))
+    let pathRequest = inputPath
+    if (queryParameters) {
+      pathRequest += '?' + querystring.stringify(queryParameters)
+    }
+    if (this.options.debug) {
+      console.log('PUT ' + pathRequest)
+      console.log('PUT BODY ' + JSON.stringify(body))
+    }
     const self = this
     return new Promise(async function (resolve, reject) {
       const requestOptions = {
         headers: {
-          Authorization: `Bearer ${await self.getSession('access_token')
-            }`
+          Authorization: `Bearer ${await self.getSession('access_token')}`
         },
         hostname: self.options.baseUrl,
         path: pathRequest,
         method: 'PUT',
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json;charset=UTF-8"
         }
       }
-      self.requestQueueing(1)
-      while (self.requestQueueActive) {
-        await self.promiseTimeout(250)
-      }
-      self.requestQueueing(null, true)
+      await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = '';
         if (res.statusCode != 200) {
           let errorText = 'Access token might have expired'
-          if (res.statusCode == '404') {
-            errorText = 'Requested parameter not found'
-          } else if (res.statusCode == '403') {
-            errorText = 'No authorized for action'
+          if (res.statusCode == 400) {
+            reject('Request content from client not accepted by server. Status code 400.')
+          } else if (res.statusCode == 401) {
+            reject('Unauthorized')
+          } else if (res.statusCode == 403) {
+            reject('Not authorized for action')
+          } else if (res.statusCode == 404) {
+            reject('Requested parameter not found')
           }
           reject(`${res.statusCode} Error in response from API url inputPath ${inputPath}. ${errorText}`)
         }
@@ -294,11 +315,11 @@ class NibeuplinkClient {
           rawData += chunk
         });
         res.on('end', () => {
-          self.requestQueueing(-1, false)
+          self.requestQueueing('end')
           resolve(JSON.parse(rawData))
         });
       }).on('error', err => {
-        self.requestQueueing(-1, false)
+        self.requestQueueing('end')
         reject(err)
       });
       request.end(JSON.stringify(body))
@@ -312,6 +333,8 @@ class NibeuplinkClient {
 
   init = async () => {
     if (this.#init && new Date() <= new Date(this.getSession('expires_at'))) return
+    this.requestQueueActive = false
+    this.requestQueue = 0
     this.#init = true
     this.initState('starting')
     if (await this.getSession('access_token') && await this.getSession('expires_at')) {
@@ -358,7 +381,6 @@ class NibeuplinkClient {
       } catch (error) {
         this.initState('one time use authCode might have been used already')
       }
-
     }
     this.initState('request new authCode')
     const queryAuth = {
