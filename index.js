@@ -1,5 +1,5 @@
 "use strict";
-const https = require('https');
+const https = require('https')
 const querystring = require('querystring')
 const Path = require('path')
 const fs = require('node:fs/promises')
@@ -35,14 +35,20 @@ class NibeuplinkClient {
     if (faultText.length > 0) throw new Error(faultText)
   }
   promiseTimeout(delay) {
-    if (this.options.debug) console.log('promiseTimeout called waiting for', delay, 'ms, waiting requests:', this.requestQueue)
-    return new Promise(resolve => setTimeout(resolve, delay));
+    if (this.options.debug > 2) console.log('promiseTimeout called waiting for', delay, 'ms, waiting requests:', this.requestQueue)
+    return new Promise(resolve => setTimeout(resolve, delay))
   }
 
   async readSession() {
     try {
       const fileContent = await fs.readFile(this.options.sessionStore, { encoding: 'utf8' }) || "{}"
-      this.#auth = JSON.parse(fileContent)
+      try {
+        this.#auth = JSON.parse(fileContent)
+      } catch (error) {
+        console.error('Error during JSON parsing of reading session data from', this.options.sessionStore)
+        console.error(err)
+        return
+      }
       return this.#auth
     } catch (error) {
       return
@@ -68,11 +74,11 @@ class NibeuplinkClient {
   }
 
   async requestQueueing(event) {
-    if (event == 'wait') {
-      this.requestQueue++
-    } else if (event == 'end') {
+    if (event == 'end') {
       this.requestQueueActive = false
       return
+    } else if (event == 'wait') {
+      this.requestQueue++
     } else {
       throw new Error(`Error in requestQueueing handling. event=${event} should be wait or end`)
     }
@@ -106,13 +112,10 @@ class NibeuplinkClient {
       }
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
-        let rawData = '';
-        if (res.statusCode != 200) {
-          reject('Error in response from API. The one time use of authCode might be used already')
-        }
+        let rawData = ''
         res.on('data', chunk => {
           rawData += chunk
-        });
+        })
         res.on('end', () => {
           self.requestQueueing('end')
           // Incoming:
@@ -123,9 +126,18 @@ class NibeuplinkClient {
           //   "scope":[SCOPES],
           //   "token_type":"bearer"
           // }
-          const response = JSON.parse(rawData);
+          if (res.statusCode != 200) {
+            if (self.options.debug > 1) console.log('getNewAccessTokenX response:', rawData)
+            reject('Error in response from API. The one time use of authCode might be used already')
+          }
+          let response
+          try {
+            response = JSON.parse(rawData)
+          } catch (_) {
+            reject(rawData)
+          }
           if (response.error) {
-            return reject('Error in response from API. The one time use of authCode might be used already')
+            reject('Error in response from API. The one time use of authCode might be used already')
           }
           response.timestamp = new Date().toISOString()
           if (response.expires_in) {
@@ -133,11 +145,11 @@ class NibeuplinkClient {
           }
           self.setSession(response)
           resolve(response)
-        });
+        })
       }).on('error', err => {
         self.requestQueueing('end')
         reject(err)
-      });
+      })
       request.end(postData)
 
     })
@@ -163,13 +175,10 @@ class NibeuplinkClient {
       }
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
-        let rawData = '';
-        if (res.statusCode != 200) {
-          reject('Error in response from API. Refresh token might have expired.')
-        }
+        let rawData = ''
         res.on('data', chunk => {
           rawData += chunk
-        });
+        })
         res.on('end', () => {
           self.requestQueueing('end')
           // Incoming:
@@ -178,9 +187,18 @@ class NibeuplinkClient {
           //   "expires_in":300,
           //   "refresh_token":[REFRESH_TOKEN],
           // }
-          const response = JSON.parse(rawData);
+          if (res.statusCode != 200) {
+            if (self.options.debug > 1) console.log('refreshAccessTokenX response:', rawData)
+            reject('Error in response from API. Refresh token might have expired.')
+          }
+          let response
+          try {
+            response = JSON.parse(rawData)
+          } catch (_) {
+            reject(response)
+          }
           if (response.error) {
-            return reject('Error in response from API. The one time use of authCode might be used already')
+            reject('Error in response from API. Refresh token might have expired.')
           }
           response.timestamp = new Date().toISOString()
           if (response.expires_in) {
@@ -188,11 +206,11 @@ class NibeuplinkClient {
           }
           self.setSession(response)
           resolve(response)
-        });
+        })
       }).on('error', err => {
         self.requestQueueing('end')
         reject(err)
-      });
+      })
       request.end(postData)
     })
   }
@@ -217,31 +235,35 @@ class NibeuplinkClient {
       }
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
-        let rawData = '';
-        if (res.statusCode != 200) {
-          let errorText = 'Access token might have expired'
-          if (res.statusCode == 400) {
-            reject('Request content from client not accepted by server')
-          } else if (res.statusCode == 401) {
-            reject('Unauthorized')
-          } else if (res.statusCode == 403) {
-            reject('Not authorized for action')
-          } else if (res.statusCode == 404) {
-            reject('Requested parameter not found')
-          }
-          reject(`${res.statusCode} Error in response from API url inputPath ${inputPath}. ${errorText}`)
-        }
+        let rawData = ''
         res.on('data', chunk => {
           rawData += chunk
-        });
+        })
         res.on('end', () => {
           self.requestQueueing('end')
-          resolve(JSON.parse(rawData))
-        });
+          if (res.statusCode != 200) {
+            if (self.options.debug > 1) console.log('getURLPathX response:', rawData)
+            let errorText = 'Access token might have expired'
+            if (res.statusCode == 400) {
+              reject('Request content from client not accepted by server')
+            } else if (res.statusCode == 401) {
+              reject('Unauthorized')
+            } else if (res.statusCode == 403) {
+              reject('Not authorized for action')
+            } else if (res.statusCode == 404) {
+              reject('Requested parameter not found')
+            }
+            reject(`${res.statusCode} Error in response from API url inputPath ${inputPath}. ${errorText}`)
+          }
+          try {
+            rawData = JSON.parse(rawData)
+          } catch (_) { }
+          resolve(rawData)
+        })
       }).on('error', err => {
         self.requestQueueing('end')
         reject(err)
-      });
+      })
       request.end()
     })
   }
@@ -297,31 +319,35 @@ class NibeuplinkClient {
       }
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
-        let rawData = '';
-        if (res.statusCode != 200) {
-          let errorText = 'Access token might have expired'
-          if (res.statusCode == 400) {
-            reject('Request content from client not accepted by server. Status code 400.')
-          } else if (res.statusCode == 401) {
-            reject('Unauthorized')
-          } else if (res.statusCode == 403) {
-            reject('Not authorized for action')
-          } else if (res.statusCode == 404) {
-            reject('Requested parameter not found')
-          }
-          reject(`${res.statusCode} Error in response from API url inputPath ${inputPath}. ${errorText}`)
-        }
+        let rawData = ''
         res.on('data', chunk => {
           rawData += chunk
-        });
+        })
         res.on('end', () => {
           self.requestQueueing('end')
-          resolve(JSON.parse(rawData))
-        });
+          if (res.statusCode != 200) {
+            if (self.options.debug > 1) console.log('putURLPathX response:', rawData)
+            let errorText = 'Access token might have expired'
+            if (res.statusCode == 400) {
+              reject('Request content from client not accepted by server. Status code 400.')
+            } else if (res.statusCode == 401) {
+              reject('Unauthorized')
+            } else if (res.statusCode == 403) {
+              reject('Not authorized for action')
+            } else if (res.statusCode == 404) {
+              reject('Requested parameter not found')
+            }
+            reject(`${res.statusCode} Error in response from API url inputPath ${inputPath}. ${errorText}`)
+          }
+          try {
+            rawData = JSON.parse(rawData)
+          } catch (_) { }
+          resolve(rawData)
+        })
       }).on('error', err => {
         self.requestQueueing('end')
         reject(err)
-      });
+      })
       request.end(JSON.stringify(body))
     })
   }

@@ -29,7 +29,7 @@ const nibeuplinkClient = new NibeuplinkClient({
 ```
 
 ### clearSession()
-*Continuously resource problems? Try clearing the store session details from storage*
+*Continuously resource problems? Try clearing the stored session details from storage*
 
 `nibeuplinkClient.clearSession()`
 
@@ -102,7 +102,7 @@ async function start() {
     fs.writeFile(Path.join(__dirname, './.parameters.json'), JSON.stringify(allParameters, null, 2))
 
   } catch (error) {
-    if (error.message.includes('Need new authCode.')) {
+    if (error.message && error.message.includes('Need new authCode.')) {
       // Normal to hit this on first request or when session expires
       console.log(error.message)
     } else {
@@ -112,3 +112,9 @@ async function start() {
 }
 start()
 ```
+
+## Limits
+
+The API specifies to do only one request pr 4 second but allowing some burst(undefined precisely what this means). Implement this your own way when using this module.
+
+As a default the session data is stored in the directory of this module and only one session is stored(The newest one). Change options `sessionStore` to fix this and remember to clean up orphaned files after changing `sessionStore` options.
