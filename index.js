@@ -215,23 +215,19 @@ class NibeuplinkClient {
     })
   }
 
-  async getURLPath(inputPath, queryParameters, skipInitCheck = false) {
-    if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
-    if (inputPath[0] != '/') { inputPath = '/' + inputPath }
-    if (queryParameters) {
-      inputPath += '?' + querystring.stringify(queryParameters)
-    }
-    if (this.options.debug) console.log('GET ' + inputPath)
+  async #requestAPI(method, path, body) {
+    if (path[0] != '/') { path = '/' + path }
     const self = this
     return new Promise(async function (resolve, reject) {
       const requestOptions = {
         headers: {
           Authorization: `Bearer ${await self.getSession('access_token')
-            }`
+            }`,
+          "Content-Type": "application/json;charset=UTF-8"
         },
         hostname: self.options.baseUrl,
-        path: inputPath,
-        method: 'GET',
+        path: path,
+        method: method,
       }
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
@@ -241,8 +237,8 @@ class NibeuplinkClient {
         })
         res.on('end', () => {
           self.requestQueueing('end')
-          if (res.statusCode != 200) {
-            if (self.options.debug > 1) console.log('getURLPathX response:', rawData)
+          if (res.statusCode >= 300) {
+            if (self.options.debug > 1) console.log('requestAPI response:', rawData)
             let errorText = 'Access token might have expired'
             if (res.statusCode == 400) {
               reject('Request content from client not accepted by server')
@@ -253,7 +249,7 @@ class NibeuplinkClient {
             } else if (res.statusCode == 404) {
               reject('Requested parameter not found')
             }
-            reject(`${res.statusCode} Error in response from API url inputPath ${inputPath}. ${errorText}`)
+            reject(`${res.statusCode} Error in response from API url inputPath ${path}. ${errorText}`)
           }
           try {
             rawData = JSON.parse(rawData)
@@ -264,8 +260,17 @@ class NibeuplinkClient {
         self.requestQueueing('end')
         reject(err)
       })
-      request.end()
+      request.end(body)
     })
+  }
+
+  async getURLPath(inputPath, queryParameters = null, skipInitCheck = false) {
+    if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
+    if (queryParameters) {
+      inputPath += '?' + querystring.stringify(queryParameters)
+    }
+    if (this.options.debug) console.log('GET ' + inputPath)
+    return this.#requestAPI('GET', inputPath)
   }
 
   async getSystems(skipInitCheck = false) {
@@ -293,63 +298,22 @@ class NibeuplinkClient {
     return data
   }
 
-  async putURLPath(inputPath, queryParameters, body = {}, skipInitCheck = false) {
+  async putURLPath(inputPath, body = {}, skipInitCheck = false) {
     if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
-    if (inputPath[0] != '/') { inputPath = '/' + inputPath }
-    let pathRequest = inputPath
-    if (queryParameters) {
-      pathRequest += '?' + querystring.stringify(queryParameters)
-    }
     if (this.options.debug) {
-      console.log('PUT ' + pathRequest)
+      console.log('PUT ' + inputPath)
       console.log('PUT BODY ' + JSON.stringify(body))
     }
-    const self = this
-    return new Promise(async function (resolve, reject) {
-      const requestOptions = {
-        headers: {
-          Authorization: `Bearer ${await self.getSession('access_token')}`
-        },
-        hostname: self.options.baseUrl,
-        path: pathRequest,
-        method: 'PUT',
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        }
-      }
-      await self.requestQueueing('wait')
-      const request = https.request(requestOptions, res => {
-        let rawData = ''
-        res.on('data', chunk => {
-          rawData += chunk
-        })
-        res.on('end', () => {
-          self.requestQueueing('end')
-          if (res.statusCode != 200) {
-            if (self.options.debug > 1) console.log('putURLPathX response:', rawData)
-            let errorText = 'Access token might have expired'
-            if (res.statusCode == 400) {
-              reject('Request content from client not accepted by server. Status code 400.')
-            } else if (res.statusCode == 401) {
-              reject('Unauthorized')
-            } else if (res.statusCode == 403) {
-              reject('Not authorized for action')
-            } else if (res.statusCode == 404) {
-              reject('Requested parameter not found')
-            }
-            reject(`${res.statusCode} Error in response from API url inputPath ${inputPath}. ${errorText}`)
-          }
-          try {
-            rawData = JSON.parse(rawData)
-          } catch (_) { }
-          resolve(rawData)
-        })
-      }).on('error', err => {
-        self.requestQueueing('end')
-        reject(err)
-      })
-      request.end(JSON.stringify(body))
-    })
+    return this.#requestAPI('PUT', inputPath, JSON.stringify(body))
+  }
+
+  async postURLPath(inputPath, body = {}, skipInitCheck = false) {
+    if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
+    if (this.options.debug) {
+      console.log('POST ' + inputPath)
+      console.log('POST BODY ' + JSON.stringify(body))
+    }
+    return this.#requestAPI('POST', inputPath, JSON.stringify(body))
   }
 
   initState = (inText) => {

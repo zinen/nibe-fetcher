@@ -56,18 +56,28 @@ E.g. for systemID 54654:
 ``getURLPath(`/api/v1/systems/{systemId}/serviceinfo/categories`,{systemId:54654, systemUnitId: 0, parameters:true})``
 
 Returns a Promise. Resolving to an object containing the response.
-### putURLPath(path,queryParameters,body={})
-**This PUT function has not been tested successful yet but should in theory work**
+### putURLPath(path,body={})
+**This PUT function will require you to have a premium subscription to be allowed work else an error code 404 is thrown**
 
 *Generic PUT request containing authorization*
 
-Required: path
-
-Optional: queryParameters, body
+Required: path, body
 
 E.g. for systemID 54654 telling outside temperature is 23°C:
 
-``putURLPath(`api/v1/systems/54654/parameters`,{systemId:54654},{settings: {40067: 230}})``
+``putURLPath(`api/v1/systems/54654/parameters`,{settings: {40067: 230}})``
+
+Returns a Promise. Resolving to an object containing the response.
+
+### postURLPath(path,body={})
+
+*Generic POST request containing authorization*
+
+Required: path, body
+
+E.g. for systemID 54654 making a virtual temperature probe at 23°C:
+
+``postURLPath(`api/v1/systems/54654/parameters`,{externalId:1,"name":"virtualProbe","actualTemp":230})``
 
 Returns a Promise. Resolving to an object containing the response.
 
@@ -118,3 +128,5 @@ start()
 The API specifies to do only one request pr 4 second but allowing some burst(undefined precisely what this means). Implement this your own way when using this module.
 
 As a default the session data is stored in the directory of this module and only one session is stored(The newest one). Change options `sessionStore` to fix this and remember to clean up orphaned files after changing `sessionStore` options.
+
+This module has not implemented a way of handling pagination. Pagination is however part of the API spec. But I haven't found any usage for it.
