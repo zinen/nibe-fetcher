@@ -53,7 +53,7 @@ Optional: queryParameters
 
 E.g. for systemID 54654:
 
-``getURLPath(`/api/v1/systems/{systemId}/serviceinfo/categories`,{systemId:54654, systemUnitId: 0, parameters:true})``
+``nibeuplinkClient.getURLPath(`/api/v1/systems/54654/serviceinfo/categories`,{parameters:true})``
 
 Returns a Promise. Resolving to an object containing the response.
 ### putURLPath(path,body={})
@@ -63,9 +63,9 @@ Returns a Promise. Resolving to an object containing the response.
 
 Required: path, body
 
-E.g. for systemID 54654 telling outside temperature is 23°C:
+E.g. for systemID 54654 telling outside temperature is 15°C:
 
-``putURLPath(`api/v1/systems/54654/parameters`,{settings: {40067: 230}})``
+``nibeuplinkClient.putURLPath(`api/v1/systems/54654/parameters`,{settings: {40067: 150}})``
 
 Returns a Promise. Resolving to an object containing the response.
 
@@ -75,9 +75,9 @@ Returns a Promise. Resolving to an object containing the response.
 
 Required: path, body
 
-E.g. for systemID 54654 making a virtual temperature probe at 23°C:
+E.g. for systemID 54654 making a virtual temperature probe at 22°C:
 
-``postURLPath(`api/v1/systems/54654/parameters`,{externalId:1,"name":"virtualProbe","actualTemp":230})``
+``nibeuplinkClient.postURLPath(`api/v1/systems/54654/parameters`,{externalId:1,"name":"virtualProbe","actualTemp":220})``
 
 Returns a Promise. Resolving to an object containing the response.
 
@@ -110,6 +110,7 @@ async function start() {
     // console.log(allParameters)
     // Returns: {parameter_key:{... values },parameter_key...}
     fs.writeFile(Path.join(__dirname, './.parameters.json'), JSON.stringify(allParameters, null, 2))
+    // Pretty prints all parameters to a file at module root
 
   } catch (error) {
     if (error.message && error.message.includes('Need new authCode.')) {
