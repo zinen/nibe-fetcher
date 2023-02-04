@@ -12,14 +12,15 @@ class NibeuplinkClient {
 
   // Define default options
   options = {
+    authCode: undefined,
+    baseUrl: 'api.nibeuplink.com',
     debug: 0,
     clientId: null,
     clientSecret: null,
-    systemId: null,
-    baseUrl: 'api.nibeuplink.com',
     redirectUri: 'http://z0mt3c.github.io/nibe.html',
     scope: 'READSYSTEM',
-    sessionStore: Path.join(__dirname, './.session.json')
+    sessionStore: Path.join(__dirname, './.session.json'),
+    systemId: null
   }
   constructor(options) {
     // Merge default options above with the ones applied at when constructing the class
