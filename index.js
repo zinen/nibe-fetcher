@@ -6,6 +6,7 @@ const fs = require('node:fs/promises')
 
 class NibeuplinkClient {
   #auth = undefined
+  #baseUrl = 'api.nibeuplink.com'
   #init = false
   requestQueueActive = false
   requestQueue = 0
@@ -13,7 +14,6 @@ class NibeuplinkClient {
   // Define default options
   options = {
     authCode: undefined,
-    baseUrl: 'api.nibeuplink.com',
     debug: 0,
     clientId: null,
     clientSecret: null,
@@ -42,7 +42,9 @@ class NibeuplinkClient {
 
   async readSession() {
     try {
+      if (this.options.debug > 2) console.log('readSession of file', this.options.sessionStore)
       const fileContent = await fs.readFile(this.options.sessionStore, { encoding: 'utf8' }) || "{}"
+      if (this.options.debug > 2) console.log('readSession file content', fileContent)
       try {
         this.#auth = JSON.parse(fileContent)
       } catch (error) {
@@ -107,7 +109,7 @@ class NibeuplinkClient {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         },
-        hostname: self.options.baseUrl,
+        hostname: self.#baseUrl,
         path: '/oauth/token',
         method: 'POST',
       }
@@ -128,7 +130,7 @@ class NibeuplinkClient {
           //   "token_type":"bearer"
           // }
           if (res.statusCode != 200) {
-            if (self.options.debug > 1) console.log('getNewAccessTokenX response:', rawData)
+            if (self.options.debug > 1) console.log('getNewAccessToken response:', rawData)
             reject('Error in response from API. The one time use of authCode might be used already')
           }
           let response
@@ -170,7 +172,7 @@ class NibeuplinkClient {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         },
-        hostname: self.options.baseUrl,
+        hostname: self.#baseUrl,
         path: '/oauth/token',
         method: 'POST',
       }
@@ -189,7 +191,7 @@ class NibeuplinkClient {
           //   "refresh_token":[REFRESH_TOKEN],
           // }
           if (res.statusCode != 200) {
-            if (self.options.debug > 1) console.log('refreshAccessTokenX response:', rawData)
+            if (self.options.debug > 1) console.log('refreshAccessToken response:', rawData)
             reject('Error in response from API. Refresh token might have expired.')
           }
           let response
@@ -226,7 +228,7 @@ class NibeuplinkClient {
             }`,
           "Content-Type": "application/json;charset=UTF-8"
         },
-        hostname: self.options.baseUrl,
+        hostname: self.#baseUrl,
         path: path,
         method: method,
       }
@@ -280,6 +282,7 @@ class NibeuplinkClient {
     return payload
   }
   async getAllParameters() {
+    if (!this.options.systemId) await this.getSystems()
     const payload = await this.getURLPath(`api/v1/systems/${this.options.systemId}/serviceinfo/categories`, { parameters: true })
     const data = {}
     const PARAMETERS_TO_FIX = [40079, 40081, 40083]
@@ -381,7 +384,7 @@ class NibeuplinkClient {
       redirect_uri: this.options.redirectUri,
       state: 'init'
     }
-    const urlAuth = 'https://' + this.options.baseUrl + '/oauth/authorize?' + querystring.stringify(queryAuth)
+    const urlAuth = 'https://' + this.#baseUrl + '/oauth/authorize?' + querystring.stringify(queryAuth)
     throw new Error(`Need new authCode. Go to page ${urlAuth}`)
   }
 }
