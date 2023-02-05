@@ -19,11 +19,15 @@ More info about what the calls new to contain can be found here. https://api.nib
 
 ```js
 const nibeuplinkClient = new NibeuplinkClient({
-  clientId:'x',
-  clientSecret:'x',
-  authCode:'x',
+  clientId:'asdasdasda', // Get this at api.nibeuplink.com/Applications
+  clientSecret:'adasdasd123!!xasd', // Get this at api.nibeuplink.com/Applications
+  authCode:'blblablabla', // Leave empty at first run and replace with content after browsing link from console output URL
   sessionStore: Path.join(__dirname, './.session.json'), // Default session data stored in a file at the modules root dir
-  scope: 'READSYSTEM' // Or 'READSYSTEM WRITESYSTEM'
+  scope: 'READSYSTEM', // Default=READSYSTEM or can be 'READSYSTEM WRITESYSTEM'. Requires premium.
+  systemId: 123152 // OPTIONAL if you only have one system ignore this setting. Or for multiple systems get yours via function getSystems()
+  //debug: 0, // Must be a number from 0=off to 3=most console.logs
+  //redirectUri: 'http://z0mt3c.github.io/nibe.html', // The Oauth return URL. Pr default links to z0mt3c page that just make the authCode ready for an easy copy/paste for you.
+  sessionStore: Path.join(__dirname, './.session.json') // Were to store the session details. 
 })
 
 ```
