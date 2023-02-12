@@ -85,10 +85,11 @@ class NibeuplinkClient {
     } else {
       throw new Error(`Error in requestQueueing handling. event=${event} should be wait or end`)
     }
-    while (this.requestQueueActive) {
+    while (this.requestQueueActive && new Date().getTime() < this.requestQueueTimeout) {
       if (this.options.debug) console.log(`Queue: ${this.requestQueueActive ? 'active' : 'non-active'}, in queue: ${this.requestQueue}`)
       await this.promiseTimeout(250)
     }
+    this.requestQueueTimeout = new Date().getTime() + 7000
     this.requestQueue--
     this.requestQueueActive = true
   }
