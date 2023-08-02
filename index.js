@@ -243,17 +243,21 @@ class NibeuplinkClient {
           self.requestQueueing('end')
           if (res.statusCode >= 300) {
             if (self.options.debug > 1) console.log('requestAPI response:', rawData)
+            let errorDetails = ''
+            try {
+              errorDetails = ' '+ JSON.parse(rawData).details[0]
+            } catch (_) { }
             let errorText = 'Access token might have expired'
             if (res.statusCode == 400) {
-              reject('Request content from client not accepted by server')
+              reject('Request content from client not accepted by server.' + errorDetails)
             } else if (res.statusCode == 401) {
-              reject('Unauthorized')
+              reject('Unauthorized.' + errorDetails)
             } else if (res.statusCode == 403) {
-              reject('Not authorized for action')
+              reject('Not authorized for action.' + errorDetails)
             } else if (res.statusCode == 404) {
-              reject('Requested parameter not found')
+              reject('Requested parameter not found.' + errorDetails)
             }
-            reject(`${res.statusCode} Error in response from API url inputPath ${path}. ${errorText}`)
+            reject(`${res.statusCode} Error in response from API url inputPath ${path}. ${errorDetails || errorText}`)
           }
           try {
             rawData = JSON.parse(rawData)
