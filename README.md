@@ -18,6 +18,7 @@ More info about what the calls new to contain can be found here. https://api.nib
 ### new in class
 
 ```js
+const NibeuplinkClient = require('nibe-fetcher-promise')
 const nibeuplinkClient = new NibeuplinkClient({
   clientId:'asdasdasda', // Get this at api.nibeuplink.com/Applications
   clientSecret:'adasdasd123!!xasd', // Get this at api.nibeuplink.com/Applications
