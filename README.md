@@ -4,13 +4,15 @@
 
 This is a fork of [nibe-fetcher](https://github.com/z0mt3c/nibe-fetcher) by [z0mt3c](https://github.com/z0mt3c). 
 
-This fork aims for zero dependencies(node native modules) and promise based to work with NIBE uplink API v1. 
+This fork aims for zero dependencies(node native modules) and promise based to work with NIBE uplink API v1 and the as of 2024 newer API of myUplink (APIv2).
+
+**Note that APIv2 is not fully developed as I don't have a test system available yet**
 
 Zero dependencies so I don't have to update this module every so often and promise based as I like JS async/await way of coding.
 
 Install
 ```
-npm install nibe-fetcher-promise
+npm install github:zinen/node-nibe-fetcher-promise#myuplink2024
 ```
 ## Functions
 More info about what the calls new to contain can be found here. https://api.myuplink.com/swagger/index.html
@@ -58,7 +60,7 @@ Optional: queryParameters
 
 E.g. for systemID 54654:
 
-``uplinkClient.getURLPath(`/api/v1/systems/54654/serviceinfo/categories`,{parameters:true})``
+``uplinkClient.getURLPath(`/v2/systems/54654/serviceinfo/categories`,{parameters:true})``
 
 Returns a Promise. Resolving to an object containing the response.
 ### putURLPath(path,body={})
@@ -70,7 +72,7 @@ Required: path, body
 
 E.g. for systemID 54654 telling outside temperature is 15°C:
 
-``uplinkClient.putURLPath(`api/v1/systems/54654/parameters`,{settings: {40067: 150}})``
+``uplinkClient.putURLPath(`/v2/systems/54654/parameters`,{settings: {40067: 150}})``
 
 Returns a Promise. Resolving to an object containing the response.
 
@@ -82,7 +84,7 @@ Required: path, body
 
 E.g. for systemID 54654 making a virtual temperature probe at 22°C:
 
-``uplinkClient.postURLPath(`api/v1/systems/54654/parameters`,{externalId:1,"name":"virtualProbe","actualTemp":220})``
+``uplinkClient.postURLPath(`/v2/systems/54654/parameters`,{externalId:1,"name":"virtualProbe","actualTemp":220})``
 
 Returns a Promise. Resolving to an object containing the response.
 
