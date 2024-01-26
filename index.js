@@ -357,7 +357,7 @@ class NibeuplinkClient {
           this.initState('access_token failed even though it should not be expired yet')
           if (error !== 'Unauthorized') console.trace(error)
         }
-        if (this.getSession('refresh_token')) {
+        if (await this.getSession('refresh_token')) {
           await this.refreshAccessToken()
           await this.getSystems(true)
           this.initState('access_token is now refreshed before it should have expired')
