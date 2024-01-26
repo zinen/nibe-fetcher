@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 const https = require('https')
 const querystring = require('querystring')
 const Path = require('path')
@@ -22,7 +22,8 @@ class NibeuplinkClient {
     sessionStore: Path.join(__dirname, './.session.json'),
     systemId: null
   }
-  constructor(options) {
+
+  constructor (options) {
     // Merge default options above with the ones applied at when constructing the class
     this.options = {
       ...this.options,
@@ -35,52 +36,53 @@ class NibeuplinkClient {
     if (this.options.authCode && this.options.authCode.length < 380) faultText += 'authCode seems too short. Try a new authCode. '
     if (faultText.length > 0) throw new Error(faultText)
   }
-  promiseTimeout(delay) {
+
+  promiseTimeout (delay) {
     if (this.options.debug > 2) console.log('promiseTimeout called waiting for', delay, 'ms, waiting requests:', this.requestQueue)
     return new Promise(resolve => setTimeout(resolve, delay))
   }
 
-  async readSession() {
+  async readSession () {
     try {
       if (this.options.debug > 2) console.log('readSession of file', this.options.sessionStore)
-      const fileContent = await fs.readFile(this.options.sessionStore, { encoding: 'utf8' }) || "{}"
+      const fileContent = await fs.readFile(this.options.sessionStore, { encoding: 'utf8' }) || '{}'
       if (this.options.debug > 2) console.log('readSession file content', fileContent)
       try {
         this.#auth = JSON.parse(fileContent)
       } catch (error) {
         console.error('Error during JSON parsing of reading session data from', this.options.sessionStore)
-        console.error(err)
+        console.error(error)
         return
       }
       return this.#auth
     } catch (error) {
-      return
+
     }
   }
 
-  async getSession(key) {
+  async getSession (key) {
     if (!this.#auth) await this.readSession()
     if (key) return this.#auth && this.#auth[key] ? this.#auth[key] : null
     return this.#auth
   }
 
-  async setSession(auth) {
+  async setSession (auth) {
     this.#auth = auth
     if (!this.options.sessionStore) return
     fs.writeFile(this.options.sessionStore, JSON.stringify(auth))
   }
 
-  async clearSession() {
+  async clearSession () {
     this.#auth = undefined
     this.#init = false
-    fs.writeFile(this.options.sessionStore, "{}")
+    fs.writeFile(this.options.sessionStore, '{}')
   }
 
-  async requestQueueing(event) {
-    if (event == 'end') {
+  async requestQueueing (event) {
+    if (event === 'end') {
       this.requestQueueActive = false
       return
-    } else if (event == 'wait') {
+    } else if (event === 'wait') {
       this.requestQueue++
     } else {
       throw new Error(`Error in requestQueueing handling. event=${event} should be wait or end`)
@@ -94,7 +96,7 @@ class NibeuplinkClient {
     this.requestQueueActive = true
   }
 
-  getNewAccessToken() {
+  getNewAccessToken () {
     const self = this
     return new Promise(async function (resolve, reject) {
       const queryAccessToken = {
@@ -103,16 +105,16 @@ class NibeuplinkClient {
         client_secret: self.options.clientSecret,
         code: self.options.authCode,
         redirect_uri: self.options.redirectUri,
-        scope: self.options.scope,
+        scope: self.options.scope
       }
       const postData = querystring.stringify(queryAccessToken)
       const requestOptions = {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
         hostname: self.#baseUrl,
         path: '/oauth/token',
-        method: 'POST',
+        method: 'POST'
       }
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
@@ -130,9 +132,9 @@ class NibeuplinkClient {
           //   "scope":[SCOPES],
           //   "token_type":"bearer"
           // }
-          if (res.statusCode != 200) {
+          if (res.statusCode !== 200) {
             if (self.options.debug > 1) console.log('getNewAccessToken response:', rawData)
-            reject('Error in response from API. The one time use of authCode might be used already')
+            reject(new Error('Error in response from API. The one time use of authCode might be used already'))
           }
           let response
           try {
@@ -141,7 +143,7 @@ class NibeuplinkClient {
             reject(rawData)
           }
           if (response.error) {
-            reject('Error in response from API. The one time use of authCode might be used already')
+            reject(new Error('Error in response from API. The one time use of authCode might be used already'))
           }
           response.timestamp = new Date().toISOString()
           if (response.expires_in) {
@@ -155,11 +157,10 @@ class NibeuplinkClient {
         reject(err)
       })
       request.end(postData)
-
     })
   }
 
-  refreshAccessToken() {
+  refreshAccessToken () {
     const self = this
     return new Promise(async function (resolve, reject) {
       const queryRefreshToken = {
@@ -171,11 +172,11 @@ class NibeuplinkClient {
       const postData = querystring.stringify(queryRefreshToken)
       const requestOptions = {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
         hostname: self.#baseUrl,
         path: '/oauth/token',
-        method: 'POST',
+        method: 'POST'
       }
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
@@ -191,9 +192,9 @@ class NibeuplinkClient {
           //   "expires_in":300,
           //   "refresh_token":[REFRESH_TOKEN],
           // }
-          if (res.statusCode != 200) {
+          if (res.statusCode !== 200) {
             if (self.options.debug > 1) console.log('refreshAccessToken response:', rawData)
-            reject('Error in response from API. Refresh token might have expired.')
+            reject(new Error('Error in response from API. Refresh token might have expired.'))
           }
           let response
           try {
@@ -202,7 +203,7 @@ class NibeuplinkClient {
             reject(response)
           }
           if (response.error) {
-            reject('Error in response from API. Refresh token might have expired.')
+            reject(new Error('Error in response from API. Refresh token might have expired.'))
           }
           response.timestamp = new Date().toISOString()
           if (response.expires_in) {
@@ -219,19 +220,19 @@ class NibeuplinkClient {
     })
   }
 
-  async #requestAPI(method, path, body) {
-    if (path[0] != '/') { path = '/' + path }
+  async #requestAPI (method, path, body) {
+    if (path[0] !== '/') { path = '/' + path }
     const self = this
     return new Promise(async function (resolve, reject) {
       const requestOptions = {
         headers: {
           Authorization: `Bearer ${await self.getSession('access_token')
             }`,
-          "Content-Type": "application/json;charset=UTF-8"
+          'Content-Type': 'application/json;charset=UTF-8'
         },
         hostname: self.#baseUrl,
-        path: path,
-        method: method,
+        path,
+        method
       }
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
@@ -245,19 +246,19 @@ class NibeuplinkClient {
             if (self.options.debug > 1) console.log('requestAPI response:', rawData)
             let errorDetails = ''
             try {
-              errorDetails = ' '+ JSON.parse(rawData).details[0]
+              errorDetails = ' ' + JSON.parse(rawData).details[0]
             } catch (_) { }
-            let errorText = 'Access token might have expired'
-            if (res.statusCode == 400) {
-              reject('Request content from client not accepted by server.' + errorDetails)
-            } else if (res.statusCode == 401) {
-              reject('Unauthorized.' + errorDetails)
-            } else if (res.statusCode == 403) {
-              reject('Not authorized for action.' + errorDetails)
-            } else if (res.statusCode == 404) {
-              reject('Requested parameter not found.' + errorDetails)
+            const errorText = 'Access token might have expired'
+            if (res.statusCode === 400) {
+              reject(new Error('Request content from client not accepted by server.' + errorDetails))
+            } else if (res.statusCode === 401) {
+              reject(new Error('Unauthorized.' + errorDetails))
+            } else if (res.statusCode === 403) {
+              reject(new Error('Not authorized for action.' + errorDetails))
+            } else if (res.statusCode === 404) {
+              reject(new Error('Requested parameter not found.' + errorDetails))
             }
-            reject(`${res.statusCode} Error in response from API url inputPath ${path}. ${errorDetails || errorText}`)
+            reject(new Error(`${res.statusCode} Error in response from API url inputPath ${path}. ${errorDetails || errorText}`))
           }
           try {
             rawData = JSON.parse(rawData)
@@ -272,7 +273,7 @@ class NibeuplinkClient {
     })
   }
 
-  async getURLPath(inputPath, queryParameters = null, skipInitCheck = false) {
+  async getURLPath (inputPath, queryParameters = null, skipInitCheck = false) {
     if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
     if (queryParameters) {
       inputPath += '?' + querystring.stringify(queryParameters)
@@ -281,12 +282,13 @@ class NibeuplinkClient {
     return this.#requestAPI('GET', inputPath)
   }
 
-  async getSystems(skipInitCheck = false) {
+  async getSystems (skipInitCheck = false) {
     const payload = await this.getURLPath('/api/v1/systems', null, skipInitCheck)
     if (!this.options.systemId) this.options.systemId = payload.objects[0].systemId
     return payload
   }
-  async getAllParameters() {
+
+  async getAllParameters () {
     if (!this.options.systemId) await this.getSystems()
     const payload = await this.getURLPath(`api/v1/systems/${this.options.systemId}/serviceinfo/categories`, { parameters: true })
     const data = {}
@@ -298,16 +300,14 @@ class NibeuplinkClient {
         const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g, '').replace(/\s/g, '_').toLowerCase()
         delete parameter.title
         delete parameter.name
-        if (parameter.unit.length) { parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length)) }
-        else if (parseFloat(parameter.displayValue)) { parameter.value = parseFloat(parameter.displayValue) }
-        else { parameter.value = parameter.rawValue }
+        if (parameter.unit.length) { parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length)) } else if (parseFloat(parameter.displayValue)) { parameter.value = parseFloat(parameter.displayValue) } else { parameter.value = parameter.rawValue }
         data[key] = parameter
       })
     })
     return data
   }
 
-  async putURLPath(inputPath, body = {}, skipInitCheck = false) {
+  async putURLPath (inputPath, body = {}, skipInitCheck = false) {
     if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
     if (this.options.debug) {
       console.log('PUT ' + inputPath)
@@ -316,7 +316,7 @@ class NibeuplinkClient {
     return this.#requestAPI('PUT', inputPath, JSON.stringify(body))
   }
 
-  async postURLPath(inputPath, body = {}, skipInitCheck = false) {
+  async postURLPath (inputPath, body = {}, skipInitCheck = false) {
     if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
     if (this.options.debug) {
       console.log('POST ' + inputPath)
@@ -355,7 +355,7 @@ class NibeuplinkClient {
           return true
         } catch (error) {
           this.initState('access_token failed even though it should not be expired yet')
-          if (error != 'Unauthorized') console.trace(error)
+          if (error !== 'Unauthorized') console.trace(error)
         }
         if (this.getSession('refresh_token')) {
           await this.refreshAccessToken()
