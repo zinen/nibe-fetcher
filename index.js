@@ -4,7 +4,7 @@ const querystring = require('querystring')
 const Path = require('path')
 const fs = require('node:fs/promises')
 
-class NibeuplinkClient {
+class UplinkClient {
   #auth = undefined
   #baseUrl = 'api.myuplink.com'
   #init = false
@@ -394,4 +394,4 @@ class NibeuplinkClient {
     throw new Error(`Need new authCode. Go to page ${urlAuth}`)
   }
 }
-module.exports = NibeuplinkClient
+module.exports = UplinkClient
