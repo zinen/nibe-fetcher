@@ -68,7 +68,7 @@ class NibeuplinkClient {
 
   async setSession (auth) {
     this.#auth = auth
-    if (!this.options.sessionStore) return
+    if (!this.options.sessionStore || !this.options.sessionStore.access_token) return
     fs.writeFile(this.options.sessionStore, JSON.stringify(auth))
   }
 
