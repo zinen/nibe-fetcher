@@ -6,7 +6,7 @@ const fs = require('node:fs/promises')
 
 class NibeuplinkClient {
   #auth = undefined
-  #baseUrl = 'api.nibeuplink.com'
+  #baseUrl = 'api.myuplink.com'
   #init = false
   requestQueueActive = false
   requestQueue = 0
@@ -18,7 +18,7 @@ class NibeuplinkClient {
     clientId: null,
     clientSecret: null,
     redirectUri: 'http://z0mt3c.github.io/nibe.html',
-    scope: 'READSYSTEM',
+    scope: 'READSYSTEM offline_access',
     sessionStore: Path.join(__dirname, './.session.json'),
     systemId: null
   }
@@ -33,7 +33,7 @@ class NibeuplinkClient {
     if (!this.options.clientId) faultText += 'clientId is missing from options. Add clientId to continue. '
     if (!this.options.clientSecret) faultText += 'clientSecret is missing from options. Add clientSecret to continue. '
     if (this.options.systemId && isNaN(Number(this.options.systemId))) faultText += 'systemId must be a number. Replace systemId with a number. '
-    if (this.options.authCode && this.options.authCode.length < 380) faultText += 'authCode seems too short. Try a new authCode. '
+    if (this.options.authCode && this.options.authCode.length < 60) faultText += 'authCode seems too short. Try a new authCode. '
     if (faultText.length > 0) throw new Error(faultText)
   }
 
@@ -283,29 +283,30 @@ class NibeuplinkClient {
   }
 
   async getSystems (skipInitCheck = false) {
-    const payload = await this.getURLPath('/api/v1/systems', null, skipInitCheck)
-    if (!this.options.systemId) this.options.systemId = payload.objects[0].systemId
+    const payload = await this.getURLPath('/v2/systems/me?page=1&itemsPerPage=100', null, skipInitCheck)
+    if (!this.options.systemId && payload.systems && payload.systems.length) this.options.systemId = payload.objects[0].systemId
     return payload
   }
 
-  async getAllParameters () {
-    if (!this.options.systemId) await this.getSystems()
-    const payload = await this.getURLPath(`api/v1/systems/${this.options.systemId}/serviceinfo/categories`, { parameters: true })
-    const data = {}
-    const PARAMETERS_TO_FIX = [40079, 40081, 40083]
-    payload.forEach(element => {
-      const category = element.categoryId
-      element.parameters.forEach(parameter => {
-        if (PARAMETERS_TO_FIX.includes(parameter.parameterId)) parameter.title += ' ' + parameter.designation
-        const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g, '').replace(/\s/g, '_').toLowerCase()
-        delete parameter.title
-        delete parameter.name
-        if (parameter.unit.length) { parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length)) } else if (parseFloat(parameter.displayValue)) { parameter.value = parseFloat(parameter.displayValue) } else { parameter.value = parameter.rawValue }
-        data[key] = parameter
-      })
-    })
-    return data
-  }
+  // NOT tested with myUplink API
+  // async getAllParameters () {
+  //   if (!this.options.systemId) await this.getSystems()
+  //   const payload = await this.getURLPath(`/v2/systems/${this.options.systemId}/serviceinfo/categories`, { parameters: true })
+  //   const data = {}
+  //   const PARAMETERS_TO_FIX = [40079, 40081, 40083]
+  //   payload.forEach(element => {
+  //     const category = element.categoryId
+  //     element.parameters.forEach(parameter => {
+  //       if (PARAMETERS_TO_FIX.includes(parameter.parameterId)) parameter.title += ' ' + parameter.designation
+  //       const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g, '').replace(/\s/g, '_').toLowerCase()
+  //       delete parameter.title
+  //       delete parameter.name
+  //       if (parameter.unit.length) { parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length)) } else if (parseFloat(parameter.displayValue)) { parameter.value = parseFloat(parameter.displayValue) } else { parameter.value = parameter.rawValue }
+  //       data[key] = parameter
+  //     })
+  //   })
+  //   return data
+  // }
 
   async putURLPath (inputPath, body = {}, skipInitCheck = false) {
     if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
@@ -357,7 +358,7 @@ class NibeuplinkClient {
           this.initState('access_token failed even though it should not be expired yet')
           if (error !== 'Unauthorized') console.trace(error)
         }
-        if (this.getSession('refresh_token')) {
+        if (await this.getSession('refresh_token')) {
           await this.refreshAccessToken()
           await this.getSystems(true)
           this.initState('access_token is now refreshed before it should have expired')
@@ -387,7 +388,7 @@ class NibeuplinkClient {
       client_id: this.options.clientId,
       scope: this.options.scope,
       redirect_uri: this.options.redirectUri,
-      state: 'init'
+      state: 'x'
     }
     const urlAuth = 'https://' + this.#baseUrl + '/oauth/authorize?' + querystring.stringify(queryAuth)
     throw new Error(`Need new authCode. Go to page ${urlAuth}`)
