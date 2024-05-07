@@ -20,7 +20,8 @@ class UplinkClient {
     redirectUri: 'http://z0mt3c.github.io/nibe.html',
     scope: 'READSYSTEM offline_access',
     sessionStore: Path.join(__dirname, './.session.json'),
-    systemId: null
+    systemId: null,
+    deviceId: null
   }
 
   constructor (options) {
@@ -32,7 +33,8 @@ class UplinkClient {
     let faultText = ''
     if (!this.options.clientId) faultText += 'clientId is missing from options. Add clientId to continue. '
     if (!this.options.clientSecret) faultText += 'clientSecret is missing from options. Add clientSecret to continue. '
-    if (this.options.systemId && isNaN(Number(this.options.systemId))) faultText += 'systemId must be a number. Replace systemId with a number. '
+    if (this.options.systemId && typeof this.options.systemId === 'string' && this.options.systemId.length > 16) faultText += 'systemId must be a string longer then 16 characters. '
+    if (this.options.deviceId && typeof this.options.deviceId === 'string' && this.options.deviceId.length > 16) faultText += 'deviceId must be a string longer then 16 characters. '
     if (this.options.authCode && this.options.authCode.length < 60) faultText += 'authCode seems too short. Try a new authCode. '
     if (faultText.length > 0) throw new Error(faultText)
   }
@@ -282,31 +284,33 @@ class UplinkClient {
     return this.#requestAPI('GET', inputPath)
   }
 
-  async getSystems (skipInitCheck = false) {
+  async getSystems (skipInitCheck = false,failOnEmpty=false,) {
     const payload = await this.getURLPath('/v2/systems/me?page=1&itemsPerPage=100', null, skipInitCheck)
-    if (!this.options.systemId && payload.systems && payload.systems.length) this.options.systemId = payload.objects[0].systemId
+    if (payload.systems && payload.systems.length) {
+      // if systemId is not defined. Choose the first item as the systemId
+      if (!this.options.systemId) this.options.systemId = payload.systems[0].systemId
+      if (!this.options.deviceId && payload.systems.devices && payload.systems.devices.length) {
+        // if deviceId is not defined. Choose the first item matching the systemId as the deviceId
+        this.options.deviceId = payload.systems.find(item=>item.systemId==this.options.systemId).devices[0]
+      }
+    }
+    if (failOnEmpty && (!this.options.systemId || !this.options.deviceId)){
+      throw new Error(`Myuplink retrieval of systemId and deviceId failed. Empty list of systems returned. Payload: ${JSON.stringify(payload)}`)
+    }
     return payload
   }
 
   // NOT tested with myUplink API
-  // async getAllParameters () {
-  //   if (!this.options.systemId) await this.getSystems()
-  //   const payload = await this.getURLPath(`/v2/systems/${this.options.systemId}/serviceinfo/categories`, { parameters: true })
-  //   const data = {}
-  //   const PARAMETERS_TO_FIX = [40079, 40081, 40083]
-  //   payload.forEach(element => {
-  //     const category = element.categoryId
-  //     element.parameters.forEach(parameter => {
-  //       if (PARAMETERS_TO_FIX.includes(parameter.parameterId)) parameter.title += ' ' + parameter.designation
-  //       const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g, '').replace(/\s/g, '_').toLowerCase()
-  //       delete parameter.title
-  //       delete parameter.name
-  //       if (parameter.unit.length) { parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length)) } else if (parseFloat(parameter.displayValue)) { parameter.value = parseFloat(parameter.displayValue) } else { parameter.value = parameter.rawValue }
-  //       data[key] = parameter
-  //     })
-  //   })
-  //   return data
-  // }
+  async getAllParameters () {
+    if (!this.options.deviceId) await this.getSystems(undefined,true)
+    const payload = await this.getURLPath(`/v3/devices/${this.options.deviceId}/points`)
+    const data = {}
+    payload.forEach(parameter => {
+      const key = parameter.parameterName.replace(/\.|,|\(|\)|:/g, '').replace(/\s/g, '_').toLowerCase()
+      data[key] = parameter
+    })
+    return data
+  }
 
   async putURLPath (inputPath, body = {}, skipInitCheck = false) {
     if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
