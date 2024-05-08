@@ -295,7 +295,7 @@ class UplinkClient {
       }
     }
     if (failOnEmpty && (!this.options.systemId || !this.options.deviceId)){
-      throw new Error(`Myuplink retrieval of systemId and deviceId failed. Empty list of systems returned. Payload: ${JSON.stringify(payload)}`)
+      throw new Error(`myUplink retrieval of systemId and deviceId failed. Empty list of systems returned. Payload: ${JSON.stringify(payload)}`)
     }
     return payload
   }
