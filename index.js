@@ -33,8 +33,8 @@ class UplinkClient {
     let faultText = ''
     if (!this.options.clientId) faultText += 'clientId is missing from options. Add clientId to continue. '
     if (!this.options.clientSecret) faultText += 'clientSecret is missing from options. Add clientSecret to continue. '
-    if (this.options.systemId && typeof this.options.systemId === 'string' && this.options.systemId.length > 16) faultText += 'systemId must be a string longer then 16 characters. '
-    if (this.options.deviceId && typeof this.options.deviceId === 'string' && this.options.deviceId.length > 16) faultText += 'deviceId must be a string longer then 16 characters. '
+    if (this.options.systemId && typeof this.options.systemId === 'string' && this.options.systemId.length < 16) faultText += 'systemId must be a string longer then 16 characters. '
+    if (this.options.deviceId && typeof this.options.deviceId === 'string' && this.options.deviceId.length < 16) faultText += 'deviceId must be a string longer then 16 characters. '
     if (this.options.authCode && this.options.authCode.length < 60) faultText += 'authCode seems too short. Try a new authCode. '
     if (faultText.length > 0) throw new Error(faultText)
   }
@@ -286,12 +286,12 @@ class UplinkClient {
 
   async getSystems (skipInitCheck = false,failOnEmpty=false,) {
     const payload = await this.getURLPath('/v2/systems/me?page=1&itemsPerPage=100', null, skipInitCheck)
-    if (payload.systems && payload.systems.length) {
+    if (payload.systems && payload.systems.length>0) {
       // if systemId is not defined. Choose the first item as the systemId
       if (!this.options.systemId) this.options.systemId = payload.systems[0].systemId
-      if (!this.options.deviceId && payload.systems.devices && payload.systems.devices.length) {
+      if (!this.options.deviceId && payload.systems[0].devices && payload.systems[0].devices.length) {
         // if deviceId is not defined. Choose the first item matching the systemId as the deviceId
-        this.options.deviceId = payload.systems.find(item=>item.systemId==this.options.systemId).devices[0]
+        this.options.deviceId = payload.systems.find(item=>item.systemId==this.options.systemId).devices[0].id
       }
     }
     if (failOnEmpty && (!this.options.systemId || !this.options.deviceId)){
