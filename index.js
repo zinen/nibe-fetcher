@@ -330,6 +330,15 @@ class UplinkClient {
     return this.#requestAPI('POST', inputPath, JSON.stringify(body))
   }
 
+  async patchURLPath (inputPath, body = {}, skipInitCheck = false) {
+    if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
+    if (this.options.debug) {
+      console.log('PATCH ' + inputPath)
+      console.log('PATCH BODY ' + JSON.stringify(body))
+    }
+    return this.#requestAPI('PATCH', inputPath, JSON.stringify(body))
+  }
+
   initState = (inText) => {
     if (this.options.debug) console.log('init: ' + inText)
     this.lastInitState = inText
