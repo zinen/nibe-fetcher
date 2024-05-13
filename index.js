@@ -307,7 +307,9 @@ class UplinkClient {
     const payload = await this.getURLPath(`/v3/devices/${this.options.deviceId}/points`)
     const data = {}
     payload.forEach(parameter => {
-      const key = parameter.parameterName.replace(/\.|,|\(|\)|:/g, '').replace(/\s/g, '_').toLowerCase()
+      let key = parameter.parameterName.replace(/\.|,|\(|\)|:/g, '').replace(/\s/g, '_').toLowerCase()
+      // Fix for the parameterNames that contains weird unicode characters
+      key = key.replace(/[^\x00-\x7f]/g,'')
       data[key] = parameter
     })
     return data
