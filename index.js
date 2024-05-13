@@ -57,9 +57,7 @@ class UplinkClient {
         return
       }
       return this.#auth
-    } catch (error) {
-
-    }
+    } catch { }
   }
 
   async getSession (key) {
@@ -70,7 +68,10 @@ class UplinkClient {
 
   async setSession (auth) {
     this.#auth = auth
-    if (!this.options.sessionStore) return
+    if (!this.options.sessionStore || !auth.access_token) {
+      if (this.options.debug > 3) console.log(`setSession called but not saved to disk, missing access_token. Content: ${JSON.stringify(auth)}`)
+      return
+    }
     fs.writeFile(this.options.sessionStore, JSON.stringify(auth))
   }
 
