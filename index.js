@@ -72,6 +72,9 @@ class UplinkClient {
       if (this.options.debug > 3) console.log(`setSession called but not saved to disk, missing access_token. Content: ${JSON.stringify(auth)}`)
       return
     }
+    if (this.options.scope.includes('offline_access') && auth.scope && !auth.scope.includes('offline_access')) {
+      console.error('myUplink setSession content should have contained a string of offline_access but was not found. Remember to check offline access after login to myuplink')
+    }
     fs.writeFile(this.options.sessionStore, JSON.stringify(auth))
   }
 
