@@ -4,7 +4,7 @@ const querystring = require('querystring')
 const Path = require('path')
 const fs = require('node:fs/promises')
 
-class UplinkClient {
+class MyUplinkClient {
   #auth = undefined
   #baseUrl = 'api.myuplink.com'
   #init = false
@@ -419,4 +419,4 @@ class UplinkClient {
     throw new Error(`Need new authCode. Go to page ${urlAuth}`)
   }
 }
-module.exports = UplinkClient
+module.exports = MyUplinkClient

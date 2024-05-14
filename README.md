@@ -1,4 +1,4 @@
-# nibe-fetcher-promise
+# myuplink-fetcher-
 [![Platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
 [![NPM Total Downloads](https://img.shields.io/npm/dt/nibe-fetcher-promise.svg)](https://www.npmjs.com/package/nibe-fetcher-promise)
 
