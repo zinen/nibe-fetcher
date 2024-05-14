@@ -289,7 +289,7 @@ class UplinkClient {
   }
 
   async getSystems (skipInitCheck = false,failOnEmpty=false,) {
-    const payload = await this.getURLPath('/v2/systems/me?page=1&itemsPerPage=100', null, skipInitCheck)
+    let payload = await this.getURLPath('/v2/systems/me?page=1&itemsPerPage=100', null, skipInitCheck)
     if (payload.systems && payload.systems.length>0) {
       // if systemId is not defined. Choose the first item as the systemId
       if (!this.options.systemId) this.options.systemId = payload.systems[0].systemId
