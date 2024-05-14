@@ -1,7 +1,7 @@
 'use strict'
-const https = require('https')
-const querystring = require('querystring')
-const Path = require('path')
+const https = require('node:https')
+const querystring = require('node:querystring')
+const Path = require('node:path')
 const fs = require('node:fs/promises')
 
 class MyUplinkClient {
