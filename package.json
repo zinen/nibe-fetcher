@@ -1,9 +1,11 @@
 {
   "name": "myuplink-fetcher",
-  "version": "1.1.1-myuplink-f",
+  "version": "1.1.1-myuplink-g",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./develop/test.js"
+    "dev": "node ./develop/test.js",
+    "test": "node test/test.spec.js",
+    "lint": "standard --fix"
   },
   "author": "zinen",
   "license": "MIT",
