@@ -86,10 +86,10 @@ class MyUplinkClient {
     fs.writeFile(this.options.sessionStore, JSON.stringify(auth))
   }
 
-  async clearSession () {
+  async clearSession (saveToDisk = true) {
     this.#auth = undefined
     this.#init = false
-    fs.writeFile(this.options.sessionStore, '{}')
+    if (saveToDisk) fs.writeFile(this.options.sessionStore, '{}')
   }
 
   async requestQueueing (event) {
@@ -125,7 +125,7 @@ class MyUplinkClient {
       const postData = querystring.stringify(queryAccessToken)
       const requestOptions = { ...self.#requestOptions }
       requestOptions.headers = {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
       }
       requestOptions.path = '/oauth/token'
       requestOptions.method = 'POST'
@@ -186,7 +186,7 @@ class MyUplinkClient {
       const postData = querystring.stringify(queryRefreshToken)
       const requestOptions = { ...self.#requestOptions }
       requestOptions.headers = {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
       }
       requestOptions.path = '/oauth/token'
       requestOptions.method = 'POST'
@@ -205,17 +205,16 @@ class MyUplinkClient {
           //   "expires_in":300,
           //   "refresh_token":[REFRESH_TOKEN],
           // }
-          if (res.statusCode !== 200) {
-            if (self.options.debug > 1) console.log('refreshAccessToken response:', rawData)
-            reject(new Error('Error in response from API. Refresh token might have expired.'))
-          }
           let response
           try {
             response = JSON.parse(rawData)
-          } catch (_) {
-            reject(response)
-          }
-          if (response.error) {
+          } catch (_) { }
+          // If response does not have status code 2xx
+          if (res.statusCode >= 300 || res.statusCode < 200) {
+            if (self.options.debug > 1) console.log('refreshAccessToken response:', rawData)
+            if (response && response.error) {
+              reject(new Error(`Error in response from API. Refresh token might have expired. API Error message: ${String(response.error)}`))
+            }
             reject(new Error('Error in response from API. Refresh token might have expired.'))
           }
           response.timestamp = new Date().toISOString()
@@ -385,13 +384,19 @@ class MyUplinkClient {
           return true
         } catch (error) {
           this.initState('access_token failed even though it should not be expired yet')
-          if (error !== 'Unauthorized') console.trace(error)
+          if (String(error) !== 'Error: Unauthorized.') console.trace(error)
         }
         if (await this.getSession('refresh_token')) {
-          await this.refreshAccessToken()
-          await this.getSystems(true)
-          this.initState('access_token is now refreshed before it should have expired')
-          return true
+          try {
+            await this.refreshAccessToken()
+            await this.getSystems(true)
+            this.initState('access_token is now refreshed before it should have expired')
+            return true
+          } catch (error) {
+            if (this.options.debug > 4) console.log(error)
+            this.initState('access_token refreshed failed. Stored session data might have errors. Resetting session internally')
+            await this.clearSession(false)
+          }
         }
       }
     }
@@ -408,6 +413,7 @@ class MyUplinkClient {
           console.trace(error)
         }
       } catch (error) {
+        if (this.options.debug > 4) console.trace(error)
         this.initState('one time use authCode might have been used already')
       }
     }
