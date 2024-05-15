@@ -415,7 +415,7 @@ class MyUplinkClient {
       redirect_uri: this.options.redirectUri,
       state: 'x'
     }
-    const urlAuth = 'https://' + this.#baseUrl + '/oauth/authorize?' + querystring.stringify(queryAuth)
+    const urlAuth = 'https://' + this.#requestOptions.hostname + ':' + this.#requestOptions.port + '/oauth/authorize?' + querystring.stringify(queryAuth)
     throw new Error(`Need new authCode. Go to page ${urlAuth}`)
   }
 
