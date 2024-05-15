@@ -112,6 +112,7 @@ class MyUplinkClient {
 
   getNewAccessToken () {
     const self = this
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async function (resolve, reject) {
       const queryAccessToken = {
         grant_type: 'authorization_code',
@@ -174,6 +175,7 @@ class MyUplinkClient {
 
   refreshAccessToken () {
     const self = this
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async function (resolve, reject) {
       const queryRefreshToken = {
         grant_type: 'refresh_token',
@@ -234,6 +236,7 @@ class MyUplinkClient {
   async #requestAPI (method, path, body) {
     if (path[0] !== '/') { path = '/' + path }
     const self = this
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async function (resolve, reject) {
       const requestOptions = { ...self.#requestOptions }
       requestOptions.headers.Authorization = `Bearer ${await self.getSession('access_token')}`
@@ -288,17 +291,17 @@ class MyUplinkClient {
     return this.#requestAPI('GET', inputPath)
   }
 
-  async getSystems (skipInitCheck = false,failOnEmpty=false,) {
+  async getSystems (skipInitCheck = false, failOnEmpty = false) {
     let payload = await this.getURLPath('/v2/systems/me?page=1&itemsPerPage=100', null, skipInitCheck)
-    if (payload.systems && payload.systems.length>0) {
+    if (payload.systems && payload.systems.length > 0) {
       // if systemId is not defined. Choose the first item as the systemId
       if (!this.options.systemId) this.options.systemId = payload.systems[0].systemId
       if (!this.options.deviceId && payload.systems[0].devices && payload.systems[0].devices.length) {
         // if deviceId is not defined. Choose the first item matching the systemId as the deviceId
-        this.options.deviceId = payload.systems.find(item=>item.systemId==this.options.systemId).devices[0].id
+        this.options.deviceId = payload.systems.find(item => item.systemId === this.options.systemId).devices[0].id
       }
     }
-    if (failOnEmpty && (!this.options.systemId || !this.options.deviceId)){
+    if (failOnEmpty && (!this.options.systemId || !this.options.deviceId)) {
       if (typeof payload === 'object') {
         delete payload.page
         delete payload.itemsPerPage
@@ -312,13 +315,14 @@ class MyUplinkClient {
 
   // NOT tested with myUplink API
   async getAllParameters () {
-    if (!this.options.deviceId) await this.getSystems(undefined,true)
+    if (!this.options.deviceId) await this.getSystems(undefined, true)
     const payload = await this.getURLPath(`/v3/devices/${this.options.deviceId}/points`)
     const data = {}
     payload.forEach(parameter => {
       let key = parameter.parameterName.replace(/\.|,|\(|\)|:/g, '').replace(/\s/g, '_').toLowerCase()
       // Fix for the parameterNames that contains weird unicode characters
-      key = key.replace(/[^\x00-\x7f]/g,'')
+      // eslint-disable-next-line no-control-regex
+      key = key.replace(/[^\x00-\x7f]/g, '')
       data[key] = parameter
     })
     return data
