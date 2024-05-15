@@ -6,10 +6,18 @@ const fs = require('node:fs/promises')
 
 class MyUplinkClient {
   #auth = undefined
-  #baseUrl = 'api.myuplink.com'
   #init = false
   requestQueueActive = false
   requestQueue = 0
+
+  #requestOptions = {
+    hostname: 'api.myuplink.com',
+    port: 443,
+    rejectUnauthorized: true,
+    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+    path: undefined,
+    method: undefined
+  }
 
   // Define default options
   options = {
@@ -114,14 +122,12 @@ class MyUplinkClient {
         scope: self.options.scope
       }
       const postData = querystring.stringify(queryAccessToken)
-      const requestOptions = {
-        headers: {
+      const requestOptions = { ...self.#requestOptions }
+      requestOptions.headers = {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        hostname: self.#baseUrl,
-        path: '/oauth/token',
-        method: 'POST'
       }
+      requestOptions.path = '/oauth/token'
+      requestOptions.method = 'POST'
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = ''
@@ -176,14 +182,13 @@ class MyUplinkClient {
         refresh_token: await self.getSession('refresh_token')
       }
       const postData = querystring.stringify(queryRefreshToken)
-      const requestOptions = {
-        headers: {
+      const requestOptions = { ...self.#requestOptions }
+      requestOptions.headers = {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        hostname: self.#baseUrl,
-        path: '/oauth/token',
-        method: 'POST'
       }
+      requestOptions.path = '/oauth/token'
+      requestOptions.method = 'POST'
+
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = ''
@@ -230,16 +235,11 @@ class MyUplinkClient {
     if (path[0] !== '/') { path = '/' + path }
     const self = this
     return new Promise(async function (resolve, reject) {
-      const requestOptions = {
-        headers: {
-          Authorization: `Bearer ${await self.getSession('access_token')
-            }`,
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        hostname: self.#baseUrl,
-        path,
-        method
-      }
+      const requestOptions = { ...self.#requestOptions }
+      requestOptions.headers.Authorization = `Bearer ${await self.getSession('access_token')}`
+      requestOptions.path = path
+      requestOptions.method = method
+
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = ''
@@ -417,6 +417,21 @@ class MyUplinkClient {
     }
     const urlAuth = 'https://' + this.#baseUrl + '/oauth/authorize?' + querystring.stringify(queryAuth)
     throw new Error(`Need new authCode. Go to page ${urlAuth}`)
+  }
+
+  /**
+   * Used for test to redefine API url
+   * @param {string} testUrl hostname:port
+   * @returns {string} URL string
+   */
+  _setAPIUrl = (testUrl) => {
+    const spilt = testUrl.split(':')
+    this.#requestOptions.hostname = spilt[0]
+    if (spilt[1] && !isNaN(spilt[1]) && spilt[1] > 0 && spilt[1] < 65535) {
+      this.#requestOptions.port = spilt[1]
+    }
+    this.#requestOptions.rejectUnauthorized = false // Ignore self-signed certificates
+    return this.#requestOptions.hostname + ':' + this.#requestOptions.port
   }
 }
 module.exports = MyUplinkClient
