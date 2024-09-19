@@ -1,6 +1,6 @@
 {
-  "name": "myuplink-fetcher",
-  "version": "1.1.1-myuplink-g",
+  "name": "myuplink-fetcher-promise",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "dev": "node ./develop/test.js",
@@ -11,16 +11,15 @@
   "license": "MIT",
   "description": "Module to communicate with myUplink API v1 + v2 + v3",
   "keywords": [
-    "nibe",
     "myuplink",
     "api"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/zinen/node-nibe-fetcher-promise.git"
+    "url": "https://github.com/zinen/node-myuplink-fetcher-promisegit"
   },
   "bugs": {
-    "url": "https://github.com/zinen/node-nibe-fetcher-promise/issues"
+    "url": "https://github.com/zinen/node-myuplink-fetcher-promise/issues"
   },
   "files": ["index.js"],
   "standard": {}

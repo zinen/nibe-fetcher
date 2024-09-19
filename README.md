@@ -1,18 +1,16 @@
-# myuplink-fetcher-
+# myuplink-fetcher-promise
 [![Platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
 [![NPM Total Downloads](https://img.shields.io/npm/dt/nibe-fetcher-promise.svg)](https://www.npmjs.com/package/nibe-fetcher-promise)
 
-This is a fork of [nibe-fetcher](https://github.com/z0mt3c/nibe-fetcher) by [z0mt3c](https://github.com/z0mt3c). 
+This is a fork of [nibe-fetcher](https://github.com/z0mt3c/nibe-fetcher) by [z0mt3c](https://github.com/z0mt3c). Later changed to myUplink API for node. 
 
 This fork aims for zero dependencies(node native modules) and promise based to work with NIBE uplink API v1 and the as of 2024 newer API of myUplink (APIv2).
-
-**Note that APIv2 is not fully developed as I don't have a test system available yet**
 
 Zero dependencies so I don't have to update this module every so often and promise based as I like JS async/await way of coding.
 
 Install
 ```
-npm install github:zinen/node-nibe-fetcher-promise#myuplink2024
+npm install myuplink-fetcher-promise
 ```
 ## Functions
 More info about what the calls new to contain can be found here. https://api.myuplink.com/swagger/index.html
@@ -20,7 +18,7 @@ More info about what the calls new to contain can be found here. https://api.myu
 ### new in class
 
 ```js
-const UplinkClient = require('nibe-fetcher-promise')
+const UplinkClient = require('myuplink-fetcher-promise')
 const uplinkClient = new UplinkClient({
   clientId:'asdasdasda', // Get this at https://dev.myuplink.com/apps
   clientSecret:'adasdasd123!!xasd', // Get this at https://dev.myuplink.com/apps
@@ -96,7 +94,7 @@ Log into https://dev.myuplink.com/apps . Create an application with callback URL
 
 If you have multiple systems connected you must find the systemId via `await uplinkClient.getSystems()` as shown below. If you only have one this will be automatically chosen.
 ```js
-const UplinkClient = require('nibe-fetcher-promise')
+const UplinkClient = require('myuplink-fetcher-promise')
 const fs = require('node:fs/promises')
 const Path = require('path')
 
