@@ -1,0 +1,7 @@
+{
+  "deviceId": "myDeviceId",
+  "firmwareId": "nibe-dev-unit",
+  "currentFwVersion": "1234R5",
+  "pendingFwVersion": "1234R5",
+  "desiredFwVersion": "1234R5"
+}

@@ -1,0 +1,25 @@
+{
+  "page": 1,
+  "itemsPerPage": 10,
+  "numItems": 1,
+  "systems": [
+    {
+      "systemId": "mySystemId",
+      "name": "heatUnitName",
+      "securityLevel": "admin",
+      "hasAlarm": false,
+      "country": "myLocation",
+      "devices": [
+        {
+          "id": "myDeviceId",
+          "connectionState": "Connected",
+          "currentFwVersion": "1234R5",
+          "product": {
+            "serialNumber": "mySerialNumber",
+            "name": "heatUnitName"
+          }
+        }
+      ]
+    }
+  ]
+}

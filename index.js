@@ -1,15 +1,23 @@
 'use strict'
-const https = require('https')
-const querystring = require('querystring')
-const Path = require('path')
+const https = require('node:https')
+const querystring = require('node:querystring')
+const Path = require('node:path')
 const fs = require('node:fs/promises')
 
-class NibeuplinkClient {
+class MyUplinkClient {
   #auth = undefined
-  #baseUrl = 'api.nibeuplink.com'
   #init = false
   requestQueueActive = false
   requestQueue = 0
+
+  #requestOptions = {
+    hostname: 'api.myuplink.com',
+    port: 443,
+    rejectUnauthorized: true,
+    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+    path: undefined,
+    method: undefined
+  }
 
   // Define default options
   options = {
@@ -18,9 +26,10 @@ class NibeuplinkClient {
     clientId: null,
     clientSecret: null,
     redirectUri: 'http://z0mt3c.github.io/nibe.html',
-    scope: 'READSYSTEM',
+    scope: 'READSYSTEM offline_access',
     sessionStore: Path.join(__dirname, './.session.json'),
-    systemId: null
+    systemId: null,
+    deviceId: null
   }
 
   constructor (options) {
@@ -32,8 +41,9 @@ class NibeuplinkClient {
     let faultText = ''
     if (!this.options.clientId) faultText += 'clientId is missing from options. Add clientId to continue. '
     if (!this.options.clientSecret) faultText += 'clientSecret is missing from options. Add clientSecret to continue. '
-    if (this.options.systemId && isNaN(Number(this.options.systemId))) faultText += 'systemId must be a number. Replace systemId with a number. '
-    if (this.options.authCode && this.options.authCode.length < 380) faultText += 'authCode seems too short. Try a new authCode. '
+    if (this.options.systemId && typeof this.options.systemId === 'string' && this.options.systemId.length < 16) faultText += 'systemId must be a string longer then 16 characters. '
+    if (this.options.deviceId && typeof this.options.deviceId === 'string' && this.options.deviceId.length < 16) faultText += 'deviceId must be a string longer then 16 characters. '
+    if (this.options.authCode && this.options.authCode.length < 60) faultText += 'authCode seems too short. Try a new authCode. '
     if (faultText.length > 0) throw new Error(faultText)
   }
 
@@ -55,9 +65,7 @@ class NibeuplinkClient {
         return
       }
       return this.#auth
-    } catch (error) {
-
-    }
+    } catch { }
   }
 
   async getSession (key) {
@@ -72,13 +80,16 @@ class NibeuplinkClient {
       if (this.options.debug > 3) console.log(`setSession called but not saved to disk, missing access_token. Content: ${JSON.stringify(auth)}`)
       return
     }
+    if (this.options.scope.includes('offline_access') && auth.scope && !auth.scope.includes('offline_access')) {
+      console.error('myUplink setSession content should have contained a string of offline_access but was not found. Remember to check offline access after login to myuplink')
+    }
     fs.writeFile(this.options.sessionStore, JSON.stringify(auth))
   }
 
-  async clearSession () {
+  async clearSession (saveToDisk = true) {
     this.#auth = undefined
     this.#init = false
-    fs.writeFile(this.options.sessionStore, '{}')
+    if (saveToDisk) fs.writeFile(this.options.sessionStore, '{}')
   }
 
   async requestQueueing (event) {
@@ -101,6 +112,7 @@ class NibeuplinkClient {
 
   getNewAccessToken () {
     const self = this
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async function (resolve, reject) {
       const queryAccessToken = {
         grant_type: 'authorization_code',
@@ -111,14 +123,12 @@ class NibeuplinkClient {
         scope: self.options.scope
       }
       const postData = querystring.stringify(queryAccessToken)
-      const requestOptions = {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        hostname: self.#baseUrl,
-        path: '/oauth/token',
-        method: 'POST'
+      const requestOptions = { ...self.#requestOptions }
+      requestOptions.headers = {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
       }
+      requestOptions.path = '/oauth/token'
+      requestOptions.method = 'POST'
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = ''
@@ -165,6 +175,7 @@ class NibeuplinkClient {
 
   refreshAccessToken () {
     const self = this
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async function (resolve, reject) {
       const queryRefreshToken = {
         grant_type: 'refresh_token',
@@ -173,14 +184,13 @@ class NibeuplinkClient {
         refresh_token: await self.getSession('refresh_token')
       }
       const postData = querystring.stringify(queryRefreshToken)
-      const requestOptions = {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        hostname: self.#baseUrl,
-        path: '/oauth/token',
-        method: 'POST'
+      const requestOptions = { ...self.#requestOptions }
+      requestOptions.headers = {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
       }
+      requestOptions.path = '/oauth/token'
+      requestOptions.method = 'POST'
+
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = ''
@@ -195,17 +205,16 @@ class NibeuplinkClient {
           //   "expires_in":300,
           //   "refresh_token":[REFRESH_TOKEN],
           // }
-          if (res.statusCode !== 200) {
-            if (self.options.debug > 1) console.log('refreshAccessToken response:', rawData)
-            reject(new Error('Error in response from API. Refresh token might have expired.'))
-          }
           let response
           try {
             response = JSON.parse(rawData)
-          } catch (_) {
-            reject(response)
-          }
-          if (response.error) {
+          } catch (_) { }
+          // If response does not have status code 2xx
+          if (res.statusCode >= 300 || res.statusCode < 200) {
+            if (self.options.debug > 1) console.log('refreshAccessToken response:', rawData)
+            if (response && response.error) {
+              reject(new Error(`Error in response from API. Refresh token might have expired. API Error message: ${String(response.error)}`))
+            }
             reject(new Error('Error in response from API. Refresh token might have expired.'))
           }
           response.timestamp = new Date().toISOString()
@@ -226,17 +235,13 @@ class NibeuplinkClient {
   async #requestAPI (method, path, body) {
     if (path[0] !== '/') { path = '/' + path }
     const self = this
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async function (resolve, reject) {
-      const requestOptions = {
-        headers: {
-          Authorization: `Bearer ${await self.getSession('access_token')
-            }`,
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        hostname: self.#baseUrl,
-        path,
-        method
-      }
+      const requestOptions = { ...self.#requestOptions }
+      requestOptions.headers.Authorization = `Bearer ${await self.getSession('access_token')}`
+      requestOptions.path = path
+      requestOptions.method = method
+
       await self.requestQueueing('wait')
       const request = https.request(requestOptions, res => {
         let rawData = ''
@@ -285,27 +290,39 @@ class NibeuplinkClient {
     return this.#requestAPI('GET', inputPath)
   }
 
-  async getSystems (skipInitCheck = false) {
-    const payload = await this.getURLPath('/api/v1/systems', null, skipInitCheck)
-    if (!this.options.systemId) this.options.systemId = payload.objects[0].systemId
+  async getSystems (skipInitCheck = false, failOnEmpty = false) {
+    let payload = await this.getURLPath('/v2/systems/me?page=1&itemsPerPage=100', null, skipInitCheck)
+    if (payload.systems && payload.systems.length > 0) {
+      // if systemId is not defined. Choose the first item as the systemId
+      if (!this.options.systemId) this.options.systemId = payload.systems[0].systemId
+      if (!this.options.deviceId && payload.systems[0].devices && payload.systems[0].devices.length) {
+        // if deviceId is not defined. Choose the first item matching the systemId as the deviceId
+        this.options.deviceId = payload.systems.find(item => item.systemId === this.options.systemId).devices[0].id
+      }
+    }
+    if (failOnEmpty && (!this.options.systemId || !this.options.deviceId)) {
+      if (typeof payload === 'object') {
+        delete payload.page
+        delete payload.itemsPerPage
+        delete payload.numItems
+        payload = JSON.stringify(payload)
+      }
+      throw new Error(`myUplink retrieval of systemId and deviceId failed. Empty list of systems returned. Payload: ${payload}`)
+    }
     return payload
   }
 
+  // NOT tested with myUplink API
   async getAllParameters () {
-    if (!this.options.systemId) await this.getSystems()
-    const payload = await this.getURLPath(`api/v1/systems/${this.options.systemId}/serviceinfo/categories`, { parameters: true })
+    if (!this.options.deviceId) await this.getSystems(undefined, true)
+    const payload = await this.getURLPath(`/v3/devices/${this.options.deviceId}/points`)
     const data = {}
-    const PARAMETERS_TO_FIX = [40079, 40081, 40083]
-    payload.forEach(element => {
-      const category = element.categoryId
-      element.parameters.forEach(parameter => {
-        if (PARAMETERS_TO_FIX.includes(parameter.parameterId)) parameter.title += ' ' + parameter.designation
-        const key = (category + ' ' + parameter.title).replace(/\.|,|\(|\)/g, '').replace(/\s/g, '_').toLowerCase()
-        delete parameter.title
-        delete parameter.name
-        if (parameter.unit.length) { parameter.value = parseFloat(parameter.displayValue.slice(0, -parameter.unit.length)) } else if (parseFloat(parameter.displayValue)) { parameter.value = parseFloat(parameter.displayValue) } else { parameter.value = parameter.rawValue }
-        data[key] = parameter
-      })
+    payload.forEach(parameter => {
+      let key = parameter.parameterName.replace(/\.|,|\(|\)|:/g, '').replace(/\s/g, '_').toLowerCase()
+      // Fix for the parameterNames that contains weird unicode characters
+      // eslint-disable-next-line no-control-regex
+      key = key.replace(/[^\x00-\x7f]/g, '')
+      data[key] = parameter
     })
     return data
   }
@@ -326,6 +343,15 @@ class NibeuplinkClient {
       console.log('POST BODY ' + JSON.stringify(body))
     }
     return this.#requestAPI('POST', inputPath, JSON.stringify(body))
+  }
+
+  async patchURLPath (inputPath, body = {}, skipInitCheck = false) {
+    if (!skipInitCheck && (!this.#init || new Date() > new Date(await this.getSession('expires_at')))) await this.init()
+    if (this.options.debug) {
+      console.log('PATCH ' + inputPath)
+      console.log('PATCH BODY ' + JSON.stringify(body))
+    }
+    return this.#requestAPI('PATCH', inputPath, JSON.stringify(body))
   }
 
   initState = (inText) => {
@@ -358,13 +384,19 @@ class NibeuplinkClient {
           return true
         } catch (error) {
           this.initState('access_token failed even though it should not be expired yet')
-          if (error !== 'Unauthorized') console.trace(error)
+          if (String(error) !== 'Error: Unauthorized.') console.trace(error)
         }
         if (await this.getSession('refresh_token')) {
-          await this.refreshAccessToken()
-          await this.getSystems(true)
-          this.initState('access_token is now refreshed before it should have expired')
-          return true
+          try {
+            await this.refreshAccessToken()
+            await this.getSystems(true)
+            this.initState('access_token is now refreshed before it should have expired')
+            return true
+          } catch (error) {
+            if (this.options.debug > 4) console.log(error)
+            this.initState('access_token refreshed failed. Stored session data might have errors. Resetting session internally')
+            await this.clearSession(false)
+          }
         }
       }
     }
@@ -381,6 +413,7 @@ class NibeuplinkClient {
           console.trace(error)
         }
       } catch (error) {
+        if (this.options.debug > 4) console.trace(error)
         this.initState('one time use authCode might have been used already')
       }
     }
@@ -390,10 +423,25 @@ class NibeuplinkClient {
       client_id: this.options.clientId,
       scope: this.options.scope,
       redirect_uri: this.options.redirectUri,
-      state: 'init'
+      state: 'x'
     }
-    const urlAuth = 'https://' + this.#baseUrl + '/oauth/authorize?' + querystring.stringify(queryAuth)
+    const urlAuth = 'https://' + this.#requestOptions.hostname + ':' + this.#requestOptions.port + '/oauth/authorize?' + querystring.stringify(queryAuth)
     throw new Error(`Need new authCode. Go to page ${urlAuth}`)
   }
+
+  /**
+   * Used for test to redefine API url
+   * @param {string} testUrl hostname:port
+   * @returns {string} URL string
+   */
+  _setAPIUrl = (testUrl) => {
+    const spilt = testUrl.split(':')
+    this.#requestOptions.hostname = spilt[0]
+    if (spilt[1] && !isNaN(spilt[1]) && spilt[1] > 0 && spilt[1] < 65535) {
+      this.#requestOptions.port = spilt[1]
+    }
+    this.#requestOptions.rejectUnauthorized = false // Ignore self-signed certificates
+    return this.#requestOptions.hostname + ':' + this.#requestOptions.port
+  }
 }
-module.exports = NibeuplinkClient
+module.exports = MyUplinkClient

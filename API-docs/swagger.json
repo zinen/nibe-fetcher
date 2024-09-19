@@ -1,0 +1,3798 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "myUplink Public API",
+    "version": "v2"
+  },
+  "paths": {
+    "/v2/devices/{deviceId}/aidMode/{aidMode}": {},
+    "/v2/devices/{deviceId}/aidMode": {
+      "get": {
+        "tags": [
+          "AidMode"
+        ],
+        "summary": "Get aid mode state.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "The id of the device.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AidModeResponseModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AidModeResponseModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AidModeResponseModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/internal/aithp24/devices/{deviceId}": {},
+    "/v2/internal/aithp24/devices/{deviceId}/users": {},
+    "/v2/internal/aithp24/devices/sync": {},
+    "/v2/internal/aithp24/devices/sync/status": {},
+    "/v2/internal/aithp24/devices/paged": {},
+    "/v2/internal/aithp24/devices/registered/{date}": {},
+    "/v2/internal/aithp24/devices/{deviceId}/installers/{email}": {},
+    "/v2/internal/aithp24/devices/{deviceId}/installers/{email}/approve": {},
+    "/v2/internal/crm/productregistration/{serialNumber}": {},
+    "/v2/devices/{deviceId}/points/{pointId}/latest": {},
+    "/v2/devices/{deviceId}/points/{pointId}/{dateFrom}/{dateTo}/{aggregationMethod}/{aggregationUnit}": {},
+    "/v2/devices/{deviceId}/points/{parameterId}/{dateFrom}/{dateTo}": {},
+    "/v2/devices/{deviceId}": {
+      "get": {
+        "tags": [
+          "DeviceInfo"
+        ],
+        "summary": "Device querying endpoint.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "The id of the device.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceResponseModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceResponseModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceResponseModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/devices/{deviceId}/smart-home-categories": {
+      "get": {
+        "tags": [
+          "DeviceInfo"
+        ],
+        "summary": "Gets the availability of smart home categories in a device.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "The id of the device.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sh-energyMetered": {
+                      "type": "boolean"
+                    },
+                    "sh-hwBoost": {
+                      "type": "boolean"
+                    },
+                    "sh-hwTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorCO2": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumidity": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpHeat": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpCool": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpOffsHeat": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpOffsCool": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-outdoorTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-poolTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-returnTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-smartMode": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedDay": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedWeek": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedMonth": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedYear": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedTotal": {
+                      "type": "boolean"
+                    },
+                    "sh-supplyTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-ventBoost": {
+                      "type": "boolean"
+                    },
+                    "sh-ventMode": {
+                      "type": "boolean"
+                    },
+                    "sh-zones": {
+                      "type": "boolean"
+                    },
+                    "sh-zoneMode": {
+                      "type": "boolean"
+                    },
+                    "sh-electricPowerUsedCurrently": {
+                      "type": "boolean"
+                    },
+                    "sh-hwMode": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorCO2Sp": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumiditySp": {
+                      "type": "boolean"
+                    },
+                    "sh-poolSp": {
+                      "type": "boolean"
+                    },
+                    "sh-solarPowerAvailableCurrently": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceMode": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceModeDuration": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumidityMode": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorDeHumiditySp": {
+                      "type": "boolean"
+                    },
+                    "sh-fanMode": {
+                      "type": "boolean"
+                    },
+                    "sh-fanStatus": {
+                      "type": "boolean"
+                    },
+                    "sh-energyStateOfCharge": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredDay": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredMonth": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredYear": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceNextLow": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceNextHigh": {
+                      "type": "boolean"
+                    },
+                    "sh-heatMode": {
+                      "type": "boolean"
+                    },
+                    "sh-heatBoost": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sh-energyMetered": {
+                      "type": "boolean"
+                    },
+                    "sh-hwBoost": {
+                      "type": "boolean"
+                    },
+                    "sh-hwTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorCO2": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumidity": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpHeat": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpCool": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpOffsHeat": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpOffsCool": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-outdoorTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-poolTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-returnTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-smartMode": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedDay": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedWeek": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedMonth": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedYear": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedTotal": {
+                      "type": "boolean"
+                    },
+                    "sh-supplyTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-ventBoost": {
+                      "type": "boolean"
+                    },
+                    "sh-ventMode": {
+                      "type": "boolean"
+                    },
+                    "sh-zones": {
+                      "type": "boolean"
+                    },
+                    "sh-zoneMode": {
+                      "type": "boolean"
+                    },
+                    "sh-electricPowerUsedCurrently": {
+                      "type": "boolean"
+                    },
+                    "sh-hwMode": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorCO2Sp": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumiditySp": {
+                      "type": "boolean"
+                    },
+                    "sh-poolSp": {
+                      "type": "boolean"
+                    },
+                    "sh-solarPowerAvailableCurrently": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceMode": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceModeDuration": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumidityMode": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorDeHumiditySp": {
+                      "type": "boolean"
+                    },
+                    "sh-fanMode": {
+                      "type": "boolean"
+                    },
+                    "sh-fanStatus": {
+                      "type": "boolean"
+                    },
+                    "sh-energyStateOfCharge": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredDay": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredMonth": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredYear": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceNextLow": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceNextHigh": {
+                      "type": "boolean"
+                    },
+                    "sh-heatMode": {
+                      "type": "boolean"
+                    },
+                    "sh-heatBoost": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sh-energyMetered": {
+                      "type": "boolean"
+                    },
+                    "sh-hwBoost": {
+                      "type": "boolean"
+                    },
+                    "sh-hwTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorCO2": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumidity": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpHeat": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpCool": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpOffsHeat": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorSpOffsCool": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-outdoorTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-poolTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-returnTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-smartMode": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedDay": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedWeek": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedMonth": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedYear": {
+                      "type": "boolean"
+                    },
+                    "sh-solarEnergyProducedTotal": {
+                      "type": "boolean"
+                    },
+                    "sh-supplyTemp": {
+                      "type": "boolean"
+                    },
+                    "sh-ventBoost": {
+                      "type": "boolean"
+                    },
+                    "sh-ventMode": {
+                      "type": "boolean"
+                    },
+                    "sh-zones": {
+                      "type": "boolean"
+                    },
+                    "sh-zoneMode": {
+                      "type": "boolean"
+                    },
+                    "sh-electricPowerUsedCurrently": {
+                      "type": "boolean"
+                    },
+                    "sh-hwMode": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorCO2Sp": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumiditySp": {
+                      "type": "boolean"
+                    },
+                    "sh-poolSp": {
+                      "type": "boolean"
+                    },
+                    "sh-solarPowerAvailableCurrently": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceMode": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceModeDuration": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorHumidityMode": {
+                      "type": "boolean"
+                    },
+                    "sh-indoorDeHumiditySp": {
+                      "type": "boolean"
+                    },
+                    "sh-fanMode": {
+                      "type": "boolean"
+                    },
+                    "sh-fanStatus": {
+                      "type": "boolean"
+                    },
+                    "sh-energyStateOfCharge": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredDay": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredMonth": {
+                      "type": "boolean"
+                    },
+                    "sh-energyMeteredYear": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceNextLow": {
+                      "type": "boolean"
+                    },
+                    "sh-electricalPriceNextHigh": {
+                      "type": "boolean"
+                    },
+                    "sh-heatMode": {
+                      "type": "boolean"
+                    },
+                    "sh-heatBoost": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/devices/{deviceId}/smart-home-zones": {
+      "get": {
+        "tags": [
+          "DeviceInfo"
+        ],
+        "summary": "Gets the available smart home zones for a device.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "The id of the device.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Language (e.g. en-GB).",
+            "schema": {
+              "type": "string",
+              "default": "en-US"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ZoneResponse"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ZoneResponse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ZoneResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/devices/{deviceId}/product-metadata": {},
+    "/devices/{deviceId}/parameter-metadata": {},
+    "/v2/devices/{deviceId}/points": {
+      "get": {
+        "tags": [
+          "DevicePoints"
+        ],
+        "summary": "Get data points for device.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "The id of the device.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Language (e.g. en-GB).",
+            "schema": {
+              "type": "string",
+              "default": "en-US"
+            }
+          },
+          {
+            "name": "parameters",
+            "in": "query",
+            "description": "Parameter ids separated by comma. Optional parameter:\r\nIf Parameter Ids are not defined, then all device's parameters will be listed.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      },
+      "patch": {
+        "tags": [
+          "DevicePoints"
+        ],
+        "summary": "Change settings on device.",
+        "description": "Sample request:\r\n            \r\n    PATCH /v2/devices/{deviceId}/points\r\n    {\r\n      \"parameterId\" : \"parameterValue\"\r\n    }\r\n<br />\r\nWhere:\r\n* deviceId - id of the specific device;\r\n* parameterId - id of the specific device parameter;\r\n* parameterValue - a new value for this parameter.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "Device id.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Data for updating data point. Consist of the dictionary of a parameters with a new values.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "54321": "30",
+                "12346": "-10"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "54321": "30",
+                "12346": "-10"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "54321": "30",
+                "12346": "-10"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "54321": "30",
+                "12346": "-10"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudToDeviceMethodResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudToDeviceMethodResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudToDeviceMethodResult"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudToDeviceMethodResult"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudToDeviceMethodResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/devices/{deviceId}/zones/{zoneId}": {
+      "patch": {
+        "tags": [
+          "DevicePoints"
+        ],
+        "summary": "Updates zone settings.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "Device ID.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "zoneId",
+            "in": "path",
+            "description": "Zone ID.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "JPI.Cloud.API.External.Areas.DeviceManagement.RequestModels.ZonePatchRequest.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonePatchRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonePatchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonePatchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonePatchRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonePatchRequest"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonePatchRequest"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ZonePatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v3/devices/{deviceId}/points": {
+      "get": {
+        "tags": [
+          "DevicePoints"
+        ],
+        "summary": "Get scaled data point for device.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "Device identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Language (e.g. en-GB).",
+            "schema": {
+              "type": "string",
+              "default": "en-US"
+            }
+          },
+          {
+            "name": "parameters",
+            "in": "query",
+            "description": "Parameter ids separated by comma. Optional parameter:\r\nIf parameter ids are not defined, then all device's parameters will be listed.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParameterData"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/devices/{deviceId}/firmware-info": {
+      "get": {
+        "tags": [
+          "Firmware"
+        ],
+        "summary": "Gets brief information about the specified device's firmware.",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceFirmwareInfoResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceFirmwareInfoResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceFirmwareInfoResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceFirmwareInfoResponse"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceFirmwareInfoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/firmware/{firmwareTypeId}/version/{version}/download": {
+      "get": {
+        "tags": [
+          "Firmware"
+        ],
+        "summary": "Download specified firmware file.",
+        "parameters": [
+          {
+            "name": "firmwareTypeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/brands/{brandId}/firmware/{firmwareTypeId}/version/{version}/download": {
+      "get": {
+        "tags": [
+          "Firmware"
+        ],
+        "summary": "Download specified firmware file and update firmware metrics (i.e. download count).",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "firmwareTypeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/oauth/token": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Token endpoint that can be used to programmatically request tokens.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/oauth/authorize": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Authorize endpoint that can be used to request tokens or authorization codes via the browser.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Authorize endpoint that can be used to request tokens or authorization codes via the browser.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/connect/authorize/callback": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Callback endpoint for authorization code flow (OAuth).",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/oauth/login": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Login endpoints for IdentityServer Authorization code flow (OAuth).",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Login endpoints for IdentityServer Authorization code flow (OAuth).",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/oauth/consent": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Consent endpoints where users confirms permissions to 3rd party app (OAuth).",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Consent endpoints where users confirms permissions to 3rd party app (OAuth).",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/oauth/error": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Error endpoint for html page with user-friendly error details (OAuth).",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/assets/identity-server/{any}": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "Serving assets (css, js etc.) for identity server pages.",
+        "parameters": [
+          {
+            "name": "any",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/.well-known/openid-configuration": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "The discovery endpoint that is used to retrieve metadata about the IdentityServer.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/.well-known/openid-configuration/jwks": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "The JSON Web Key Set (JWKS) is a set of keys which contains the public keys used to verify any JSON Web Token (JWT) issued by the authorization server and signed using the RS256 signing algorithm.\r\nSee https://auth0.com/docs/tokens/concepts/jwks.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/systems/{systemId}/notifications/active": {
+      "get": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Retrieve active alarms for specified system.",
+        "parameters": [
+          {
+            "name": "systemId",
+            "in": "path",
+            "description": "ID of the system.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number. Optional, defaults to 1.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "Maximum number of results to be returned. Optional, defaults to 10.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Language (e.g. en-GB).",
+            "schema": {
+              "type": "string",
+              "default": "en-US"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmsPaged"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmsPaged"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmsPaged"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/systems/{systemId}/notifications": {
+      "get": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Retrieve all (active, inactive and archived) alarms for specified system.",
+        "parameters": [
+          {
+            "name": "systemId",
+            "in": "path",
+            "description": "ID of the system.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number. Optional, defaults to 1.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "Maximum number of results to be returned. Optional, defaults to 10.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Language (e.g. en-GB).",
+            "schema": {
+              "type": "string",
+              "default": "en-US"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmsPaged"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmsPaged"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlarmsPaged"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/systems/{systemId}/notifications/{notificationId}": {},
+    "/v2/systems/{systemId}/notifications/{notificationId}/reset": {},
+    "/v2/protected-ping": {
+      "get": {
+        "tags": [
+          "Ping"
+        ],
+        "summary": "Tests the API availability with authorization header.",
+        "responses": {
+          "204": {
+            "description": "If API is alive."
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/ping": {
+      "get": {
+        "tags": [
+          "Ping"
+        ],
+        "summary": "Tests the API availability.",
+        "responses": {
+          "204": {
+            "description": "If API is alive."
+          }
+        },
+        "authorized-groups":
+      }
+    },
+    "/v2/systems/{systemId}/subscriptions": {
+      "get": {
+        "tags": [
+          "Premium"
+        ],
+        "summary": "Finds out whether the specified system\r\nhas any active premium subscriptions.",
+        "parameters": [
+          {
+            "name": "systemId",
+            "in": "path",
+            "description": "The id of the System to search for.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DevicePremiumResponse"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DevicePremiumResponse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DevicePremiumResponse"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DevicePremiumResponse"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DevicePremiumResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/productregistration": {},
+    "/v2/productregistration/{serialNumber}": {},
+    "/v2/productregistration/getbydate/{date}": {},
+    "/v2/productregistration/register/{serialNumber}": {},
+    "/v2/productregistration/register": {},
+    "/v2/spotprices/{regionId}": {},
+    "/v2/internal/ssg/systems/{systemId}/categories": {},
+    "/v2/internal/ssg/systems/{systemId}/categories/data": {},
+    "/v2/internal/ssg/systems/search/{serialNumber}": {},
+    "/v2/internal/ssg/systems/{systemId}/devices": {},
+    "/v2/internal/ssg/systems/{systemId}/points/{pointId}/{dateFrom}/{dateTo}/{aggregationMethod}/{aggregationUnit}": {},
+    "/v2/internal/ssg/systems/{systemId}/points": {},
+    "/v2/internal/ssg/systems/{systemId}/store.set": {},
+    "/v2/internal/ssg/systems/{systemId}": {},
+    "/v2/internal/ssg/systems/{systemId}/notifications/{notificationId}": {},
+    "/v2/internal/ssg/systems/{systemId}/notifications": {},
+    "/v2/internal/ssg/user/profile/{email}": {},
+    "/v2/internal/ssg/voucher": {},
+    "/v2/internal/ssg/vouchers": {},
+    "/v2/systems/me": {
+      "get": {
+        "tags": [
+          "Systems"
+        ],
+        "summary": "Get user systems.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "Items per page.",
+            "schema": {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedSystemResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedSystemResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedSystemResult"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedSystemResult"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedSystemResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    },
+    "/v2/systems/{systemId}": {},
+    "/v2/systems/{systemId}/categories": {},
+    "/v2/systems/{systemId}/categories/{categoryName}": {},
+    "/v2/systems/{systemId}/smart-home-mode": {
+      "put": {
+        "tags": [
+          "Systems"
+        ],
+        "summary": "Set smart home mode for a system.",
+        "parameters": [
+          {
+            "name": "systemId",
+            "in": "path",
+            "description": "The id of the system.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The specified smart mode.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmartHomeModeModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmartHomeModeModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmartHomeModeModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmartHomeModeModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      },
+      "get": {
+        "tags": [
+          "Systems"
+        ],
+        "summary": "Get current smart home mode of a system.",
+        "parameters": [
+          {
+            "name": "systemId",
+            "in": "path",
+            "description": "The id of the system.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmartHomeModeModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmartHomeModeModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmartHomeModeModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Client Credentials": [],
+            "Client Credentials AD B2C": []
+          }
+        ],
+        "authorized-groups":
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Default state of empty Address",
+            "nullable": true
+          },
+          "lineOne": {
+            "type": "string",
+            "description": "LineOne",
+            "nullable": true
+          },
+          "lineTwo": {
+            "type": "string",
+            "description": "LineTwo",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "PostalCode",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "description": "City",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "description": "Region",
+            "nullable": true
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Address model."
+      },
+      "AddressResponseModel": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country"
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AggregationMethod": {
+        "enum": [
+          "Max",
+          "Min",
+          "Sum",
+          "Average",
+          "Median",
+          "Diff",
+          "None"
+        ],
+        "type": "string"
+      },
+      "AggregationUnit": {
+        "enum": [
+          "None",
+          "Hours",
+          "Days",
+          "Weeks",
+          "Months",
+          "WeeksStartingOnSunday",
+          "Infinite"
+        ],
+        "type": "string"
+      },
+      "AidMode": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AidModeResponseModel": {
+        "type": "object",
+        "properties": {
+          "aidMode": {
+            "$ref": "#/components/schemas/AidMode"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Alarm": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the alarm stored in the database.",
+            "format": "uuid"
+          },
+          "alarmNumber": {
+            "type": "integer",
+            "description": "The company´s id of the alarm.",
+            "format": "int32",
+            "readOnly": true
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "The device which the alarm belongs to.",
+            "nullable": true
+          },
+          "severity": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "description": "Determines the severity of the alarm,\r\n1 being the most severe.",
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "createdDatetime": {
+            "type": "string",
+            "description": "Date of the creation.",
+            "nullable": true
+          },
+          "statusHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlarmStatus"
+            },
+            "description": "Status history.",
+            "nullable": true
+          },
+          "header": {
+            "type": "string",
+            "description": "Localized alarm title.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Localized alarm description.",
+            "nullable": true
+          },
+          "equipName": {
+            "type": "string",
+            "description": "The name of the equipment.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Alarm."
+      },
+      "AlarmSeverity": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "description": "Alarm severity enum.",
+        "format": "int32"
+      },
+      "AlarmStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "datetime": {
+            "type": "integer",
+            "description": "Date of the alarm.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AlarmsPaged": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Page.",
+            "format": "int32"
+          },
+          "itemsPerPage": {
+            "type": "integer",
+            "description": "Items per page.",
+            "format": "int32"
+          },
+          "numItems": {
+            "type": "integer",
+            "description": "Num items.",
+            "format": "int32"
+          },
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Alarm"
+            },
+            "description": "Notifications.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Alarms paged."
+      },
+      "AvailableMethods": {
+        "type": "object",
+        "properties": {
+          "settings": {
+            "type": "boolean"
+          },
+          "reboot": {
+            "type": "boolean"
+          },
+          "forcesync": {
+            "type": "boolean"
+          },
+          "forceUpdate": {
+            "type": "boolean"
+          },
+          "requestUpdate": {
+            "type": "boolean"
+          },
+          "resetAlarm": {
+            "type": "boolean"
+          },
+          "triggerEvent": {
+            "type": "boolean"
+          },
+          "getMenu": {
+            "type": "boolean"
+          },
+          "getMenuChain": {
+            "type": "boolean"
+          },
+          "getGuideQuestion": {
+            "type": "boolean"
+          },
+          "sendHaystack": {
+            "type": "boolean"
+          },
+          "setSmartMode": {
+            "type": "boolean"
+          },
+          "setAidMode": {
+            "type": "boolean"
+          },
+          "getZones": {
+            "type": "boolean"
+          },
+          "processIntent": {
+            "type": "boolean"
+          },
+          "boostHotWater": {
+            "type": "boolean"
+          },
+          "boostVentilation": {
+            "type": "boolean"
+          },
+          "getScheduleConfig": {
+            "type": "boolean"
+          },
+          "getScheduleModes": {
+            "type": "boolean"
+          },
+          "getScheduleWeekly": {
+            "type": "boolean"
+          },
+          "getScheduleVacation": {
+            "type": "boolean"
+          },
+          "setScheduleModes": {
+            "type": "boolean"
+          },
+          "setScheduleWeekly": {
+            "type": "boolean"
+          },
+          "setScheduleOverride": {
+            "type": "boolean"
+          },
+          "setScheduleVacation": {
+            "type": "boolean"
+          },
+          "setVentilationMode": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CloudToDeviceMethodResult": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Gets or sets the status of device method invocation.",
+            "format": "int32"
+          },
+          "payload": {}
+        },
+        "additionalProperties": false,
+        "description": "Represents the Device Method Invocation Results."
+      },
+      "Country": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Id",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Country model"
+      },
+      "Curve": {
+        "type": "object",
+        "properties": {
+          "parameter": {
+            "$ref": "#/components/schemas/ParameterData"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataPoint"
+            },
+            "description": "List of curve points.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Curve."
+      },
+      "DataPoint": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp property.",
+            "format": "date-time"
+          },
+          "value": {
+            "description": "Value property.",
+            "nullable": true
+          },
+          "pointId": {
+            "type": "string",
+            "description": "The id of the device variable.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Device data point."
+      },
+      "DeviceCategoriesModel": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "description": "Device id.",
+            "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceCategory"
+            },
+            "description": "Categories.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Device equip model."
+      },
+      "DeviceCategory": {
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "description": "Category name.",
+            "nullable": true
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParameterDetail"
+            },
+            "description": "Parameters.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Equip model."
+      },
+      "DeviceCategoryModel": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "description": "Device id.",
+            "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceCategory"
+            },
+            "description": "Categories.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Device equip model."
+      },
+      "DeviceConnectionState": {
+        "enum": [
+          "Disconnected",
+          "Connected"
+        ],
+        "type": "string",
+        "description": "Specifies the different connection states of a device.\r\n0 - Disconnected\r\n1 - Connected"
+      },
+      "DeviceFirmwareInfoResponse": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "firmwareId": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentFwVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "pendingFwVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "desiredFwVersion": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeviceInfoResponseModel": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "productName": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressResponseModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeviceInfoResponseModelPagedResult": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceInfoResponseModel"
+            },
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeviceInfoSyncResponseModel": {
+        "type": "object",
+        "properties": {
+          "syncId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeviceParameterData": {
+        "type": "object",
+        "properties": {
+          "parameterId": {
+            "type": "string",
+            "description": "Parameter id.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "parameterName": {
+            "type": "string",
+            "description": "Parameter name.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "parameterUnit": {
+            "type": "string",
+            "description": "Parameter unit.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Device id.",
+            "nullable": true
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp property.",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "value": {
+            "description": "Value property.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "strVal": {
+            "type": "string",
+            "description": "String value property.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Grouped parameter value."
+      },
+      "DevicePremiumResponse": {
+        "type": "object",
+        "properties": {
+          "subscriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PremiumFeatureResponseModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeviceResponseModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id.",
+            "nullable": true
+          },
+          "connectionState": {
+            "$ref": "#/components/schemas/DeviceConnectionState"
+          },
+          "firmware": {
+            "$ref": "#/components/schemas/FirmwareResponseModel"
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductResponseModel"
+          },
+          "availableFeatures": {
+            "$ref": "#/components/schemas/AvailableMethods"
+          }
+        },
+        "additionalProperties": false,
+        "description": "DeviceResponseModel."
+      },
+      "EnumValues": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The EnumValue of the Enum.",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "description": "The EnumText of the Enum.",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "description": "The EnumIcon of the Enum.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FirmwareResponseModel": {
+        "type": "object",
+        "properties": {
+          "currentFwVersion": {
+            "type": "string",
+            "description": "Current Firmware Version",
+            "nullable": true
+          },
+          "desiredFwVersion": {
+            "type": "string",
+            "description": "Desired Firmware Version",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Firmware response model"
+      },
+      "GroupedDeviceParameterData": {
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "description": "Category name.",
+            "nullable": true
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceParameterData"
+            },
+            "description": "Device parameter data.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Grouped parameter value."
+      },
+      "LimitedUserProfile": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "description": "Full name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "User profile model."
+      },
+      "PagedSystemResult": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Id.",
+            "format": "int32"
+          },
+          "itemsPerPage": {
+            "type": "integer",
+            "description": "Connection state.",
+            "format": "int32"
+          },
+          "numItems": {
+            "type": "integer",
+            "description": "Firmware.",
+            "format": "int32"
+          },
+          "systems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemWithDevices"
+            },
+            "description": "Groups.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Group list."
+      },
+      "ParameterData": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "parameterId": {
+            "type": "string",
+            "description": "Parameter id.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "parameterName": {
+            "type": "string",
+            "description": "Parameter name.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "parameterUnit": {
+            "type": "string",
+            "description": "Parameter unit.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "writable": {
+            "type": "boolean",
+            "description": "Defines if parameter could be changed.",
+            "readOnly": true
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp property.",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "value": {
+            "description": "Value property.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "strVal": {
+            "type": "string",
+            "description": "String value property.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "smartHomeCategories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Parameter Smart home categories.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "minValue": {
+            "type": "number",
+            "description": "Parameter min value.",
+            "format": "double",
+            "nullable": true,
+            "readOnly": true
+          },
+          "maxValue": {
+            "type": "number",
+            "description": "Parameter max value.",
+            "format": "double",
+            "nullable": true,
+            "readOnly": true
+          },
+          "stepValue": {
+            "type": "number",
+            "description": "Parameter step value, specifies the allowed stepping between valid values\r\nwhen the value is numeric.",
+            "format": "double",
+            "nullable": true,
+            "readOnly": true
+          },
+          "enumValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnumValues"
+            },
+            "description": "Parameter enum values.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "scaleValue": {
+            "type": "string",
+            "description": "Parameter scale value.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "zoneId": {
+            "type": "string",
+            "description": "Reference to a ShZone entity.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Grouped parameter value."
+      },
+      "ParameterDetail": {
+        "type": "object",
+        "properties": {
+          "parameterId": {
+            "type": "string",
+            "description": "Parameter id.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "parameterName": {
+            "type": "string",
+            "description": "Parameter name.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "parameterUnit": {
+            "type": "string",
+            "description": "Parameter unit.",
+            "nullable": true
+          },
+          "smartHomeCategories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Parameter Smart home categories.",
+            "nullable": true
+          },
+          "minValue": {
+            "type": "integer",
+            "description": "Parameter min value.",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxValue": {
+            "type": "integer",
+            "description": "Parameter max value.",
+            "format": "int32",
+            "nullable": true
+          },
+          "stepValue": {
+            "type": "integer",
+            "description": "Parameter step value, specifies the allowed stepping between valid values\r\nwhen the value is numeric.",
+            "format": "int32",
+            "nullable": true
+          },
+          "enumValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnumValues"
+            },
+            "description": "Parameter enum values.",
+            "nullable": true
+          },
+          "scaleValue": {
+            "type": "string",
+            "description": "Parameter scale value.",
+            "nullable": true
+          },
+          "zoneId": {
+            "type": "string",
+            "description": "Reference to a ShZone entity.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Equip group model."
+      },
+      "PatchSystemModel": {
+        "type": "object",
+        "properties": {
+          "systemId": {
+            "type": "string",
+            "description": "Id.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name.",
+            "nullable": true
+          },
+          "isFound": {
+            "type": "boolean",
+            "description": "Is found.",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Patch group request."
+      },
+      "PremiumFeatureResponseModel": {
+        "type": "object",
+        "properties": {
+          "validUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/PremiumFeatures"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PremiumFeatures": {
+        "enum": [
+          "history",
+          "manage",
+          "organization"
+        ],
+        "type": "string",
+        "description": "Premium features enum."
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "serialNumber": {
+            "type": "string",
+            "description": "Serial number.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Product model."
+      },
+      "ProductRegistrationAddress": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country"
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductRegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "serialNumber": {
+            "type": "string",
+            "description": "Serial number, and also id, for the product registration.",
+            "nullable": true
+          },
+          "operatingHours": {
+            "type": "integer",
+            "description": "The operating hours for the product registration.",
+            "format": "int32",
+            "nullable": true
+          },
+          "installationDate": {
+            "type": "string",
+            "description": "Determines what date the product was installed.",
+            "format": "date-time"
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Determines what date the product was registered.",
+            "format": "date-time"
+          },
+          "warrantyEndDate": {
+            "type": "string",
+            "description": "Determines what date the warranty expires.",
+            "format": "date-time"
+          },
+          "customerName": {
+            "type": "string",
+            "description": "The name of the customer.",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "description": "The id of the user connected to this product registration.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "userAddressId": {
+            "type": "string",
+            "description": "The id of the user´s address details.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "servicePartnerId": {
+            "type": "integer",
+            "description": "The id of the Service Partner, if known.",
+            "format": "int32",
+            "nullable": true
+          },
+          "userEmail": {
+            "type": "string",
+            "description": "The user´s email address.",
+            "nullable": true
+          },
+          "systemAddressId": {
+            "type": "string",
+            "description": "The id of the system´s address details.",
+            "format": "uuid"
+          },
+          "installerName": {
+            "type": "string",
+            "description": "The name of the installer of the product.",
+            "nullable": true
+          },
+          "site": {
+            "type": "string",
+            "description": "The site where the product is installed.",
+            "nullable": true
+          },
+          "modelName": {
+            "type": "string",
+            "description": "The name of the current model.",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number to the installation.",
+            "nullable": true
+          },
+          "productName": {
+            "type": "string",
+            "description": "Product name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Product registration response."
+      },
+      "ProductRegistrationResponseWithAddress": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/ProductRegistrationAddress"
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "Serial number, and also id, for the product registration.",
+            "nullable": true
+          },
+          "operatingHours": {
+            "type": "integer",
+            "description": "The operating hours for the product registration.",
+            "format": "int32",
+            "nullable": true
+          },
+          "installationDate": {
+            "type": "string",
+            "description": "Determines what date the product was installed.",
+            "format": "date-time"
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Determines what date the product was registered.",
+            "format": "date-time"
+          },
+          "warrantyEndDate": {
+            "type": "string",
+            "description": "Determines what date the warranty expires.",
+            "format": "date-time"
+          },
+          "customerName": {
+            "type": "string",
+            "description": "The name of the customer.",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "description": "The id of the user connected to this product registration.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "userAddressId": {
+            "type": "string",
+            "description": "The id of the user´s address details.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "servicePartnerId": {
+            "type": "integer",
+            "description": "The id of the Service Partner, if known.",
+            "format": "int32",
+            "nullable": true
+          },
+          "userEmail": {
+            "type": "string",
+            "description": "The user´s email address.",
+            "nullable": true
+          },
+          "systemAddressId": {
+            "type": "string",
+            "description": "The id of the system´s address details.",
+            "format": "uuid"
+          },
+          "installerName": {
+            "type": "string",
+            "description": "The name of the installer of the product.",
+            "nullable": true
+          },
+          "site": {
+            "type": "string",
+            "description": "The site where the product is installed.",
+            "nullable": true
+          },
+          "modelName": {
+            "type": "string",
+            "description": "The name of the current model.",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number to the installation.",
+            "nullable": true
+          },
+          "productName": {
+            "type": "string",
+            "description": "Product name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductResponseModel": {
+        "type": "object",
+        "properties": {
+          "serialNumber": {
+            "type": "string",
+            "description": "SerialNumber",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "ProductResponseModel"
+      },
+      "Properties": {
+        "type": "object",
+        "properties": {
+          "reported": {
+            "$ref": "#/components/schemas/Reported"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Reported": {
+        "type": "object",
+        "properties": {
+          "deviceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "productName": {
+            "type": "string",
+            "nullable": true
+          },
+          "brand": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "serialId": {
+            "type": "string",
+            "nullable": true
+          },
+          "firmware": {
+            "$ref": "#/components/schemas/ReportedFirmware"
+          },
+          "aidMode": {
+            "type": "string",
+            "nullable": true
+          },
+          "smartMode": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "$version": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReportedFirmware": {
+        "type": "object",
+        "properties": {
+          "firmwareId": {
+            "type": "string",
+            "nullable": true
+          },
+          "pendingFwVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastFwUpdateStartTime": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentFwVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastFwUpdateEndTime": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SearchGroupSSG": {
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "systemId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "connectionState": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastActivityTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authenticationType": {
+            "type": "string",
+            "nullable": true
+          },
+          "properties": {
+            "$ref": "#/components/schemas/Properties"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SecurityLevel": {
+        "enum": [
+          "admin",
+          "manager",
+          "viewer"
+        ],
+        "type": "string"
+      },
+      "SmartHomeModeModel": {
+        "type": "object",
+        "properties": {
+          "smartHomeMode": {
+            "$ref": "#/components/schemas/SmartMode"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SmartMode": {
+        "enum": [
+          "Default",
+          "Normal",
+          "Away",
+          "Vacation",
+          "Home"
+        ],
+        "type": "string",
+        "description": "Smart mode enum."
+      },
+      "SpotPriceDeliveryModel": {
+        "required": [
+          "prices"
+        ],
+        "type": "object",
+        "properties": {
+          "prices": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "description": "Dictionary with prices. Key is the start date and time in UTC and the value is the price\r\nin (Currency*100)/MWh"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SsqGroupDevice": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description.",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "description": "Device Id.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Type.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Ssq group device."
+      },
+      "Status": {
+        "enum": [
+          "None",
+          "Active",
+          "DismissedByDevice",
+          "ResetByUserOnDevice",
+          "ResetByUserFromCloud",
+          "Unknown"
+        ],
+        "type": "string"
+      },
+      "StoreSet": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreSetEntry"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoreSetEntry": {
+        "type": "object",
+        "properties": {
+          "variableId": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "defaultValue": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemDevice": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id.",
+            "nullable": true
+          },
+          "connectionState": {
+            "$ref": "#/components/schemas/DeviceConnectionState"
+          },
+          "currentFwVersion": {
+            "type": "string",
+            "description": "Current firmware version.",
+            "nullable": true
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Device model."
+      },
+      "SystemWithDevices": {
+        "type": "object",
+        "properties": {
+          "systemId": {
+            "type": "string",
+            "description": "System identifier.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "System name.",
+            "nullable": true
+          },
+          "securityLevel": {
+            "$ref": "#/components/schemas/SecurityLevel"
+          },
+          "hasAlarm": {
+            "type": "boolean",
+            "description": "Whether system currently has an active alarm."
+          },
+          "country": {
+            "type": "string",
+            "description": "System country.",
+            "nullable": true
+          },
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemDevice"
+            },
+            "description": "List of devices.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Group."
+      },
+      "UpdateGroupRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Patch group request."
+      },
+      "UserWithAddress": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoucherManyRequest": {
+        "type": "object",
+        "properties": {
+          "numDays": {
+            "type": "integer",
+            "description": "Num days.",
+            "format": "int32"
+          },
+          "voucherType": {
+            "$ref": "#/components/schemas/VoucherType"
+          },
+          "numVouchers": {
+            "type": "integer",
+            "description": "The number of vouchers to create.",
+            "format": "int32"
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "The serial number of a device.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Voucher single request."
+      },
+      "VoucherSingleRequest": {
+        "type": "object",
+        "properties": {
+          "numDays": {
+            "type": "integer",
+            "description": "Num days.",
+            "format": "int32"
+          },
+          "voucherType": {
+            "$ref": "#/components/schemas/VoucherType"
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "Serial number.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Voucher single request."
+      },
+      "VoucherType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "description": "Voucher types.",
+        "format": "int32"
+      },
+      "ZonePatchRequest": {
+        "type": "object",
+        "properties": {
+          "setpointHeat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "setpointCool": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "mode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ZoneResponse": {
+        "type": "object",
+        "properties": {
+          "zoneId": {
+            "type": "string",
+            "description": "sh-zone's parameter id.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "sh-zone's parameter name.",
+            "nullable": true
+          },
+          "commandOnly": {
+            "type": "boolean",
+            "description": "If true, zone is command-only and no temperature readings\r\nare available. Setpoint will be an unspecified value\r\n(not degrees)."
+          },
+          "supportedModes": {
+            "type": "string",
+            "description": "sh-zone's supported modes.",
+            "nullable": true
+          },
+          "mode": {
+            "type": "string",
+            "description": "Sh-zone's current mode.",
+            "nullable": true
+          },
+          "temperature": {
+            "type": "number",
+            "description": "Current temperature in target unit.",
+            "format": "double",
+            "nullable": true
+          },
+          "setpoint": {
+            "type": "number",
+            "description": "Target temperature in target unit.",
+            "format": "double",
+            "nullable": true
+          },
+          "setpointHeat": {
+            "type": "number",
+            "description": "Heating setpoint current value.",
+            "format": "double",
+            "nullable": true
+          },
+          "setpointCool": {
+            "type": "number",
+            "description": "Cooling setpoint current value.",
+            "format": "double",
+            "nullable": true
+          },
+          "setpointRangeMin": {
+            "type": "integer",
+            "description": "Minimum temperature range.",
+            "format": "int32",
+            "nullable": true
+          },
+          "setpointRangeMax": {
+            "type": "integer",
+            "description": "Maximum temperature range.",
+            "format": "int32",
+            "nullable": true
+          },
+          "isCelsius": {
+            "type": "boolean",
+            "description": "Specified temperature unit in haystack.\r\nIf \"isCelsius\" is false then all temperatures are in Fahrenheit. Otherwies it is in Celsius."
+          },
+          "indoorCo2": {
+            "type": "integer",
+            "description": "Indoor CO2 levels (0-40000ppm)",
+            "format": "int32",
+            "nullable": true
+          },
+          "indoorHumidity": {
+            "type": "number",
+            "description": "Indoor humidity (0-100%RH)",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Client Credentials": {
+        "type": "oauth2",
+        "description": "Default credentials:\nclient_id: Confidential-Test-Client\nclient_secret: [provide password]",
+        "flows": {
+          "clientCredentials": {
+            "authorizationUrl": "https://api.myuplink.com/oauth/login",
+            "tokenUrl": "https://api.myuplink.com/oauth/token",
+            "scopes": {
+              "READSYSTEM": "Access to GET methods",
+              "WRITESYSTEM": "Access to PUT, POST, PATCH, DELETE methods"
+            }
+          }
+        }
+      }
+    }
+  }
+}
