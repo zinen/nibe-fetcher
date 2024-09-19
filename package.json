@@ -1,18 +1,17 @@
 {
   "name": "nibe-fetcher-promise",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "main": "index.js",
   "scripts": {
     "dev": "node ./develop/test.js"
   },
   "author": "zinen",
   "license": "MIT",
-  "description": "Module to communicate with the NIBE Uplink API v1 and soon myUplink API v2",
+  "description": "Module to communicate with the NIBE Uplink API v1",
   "keywords": [
     "nibe",
     "uplink",
     "api",
-    "myUplink"
   ],
   "repository": {
     "type": "git",

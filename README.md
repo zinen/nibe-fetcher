@@ -1,12 +1,13 @@
+# Deprecated: This package has been renamed to myuplink-fetcher-promise
+
 # nibe-fetcher-promise
+
 [![Platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
 [![NPM Total Downloads](https://img.shields.io/npm/dt/nibe-fetcher-promise.svg)](https://www.npmjs.com/package/nibe-fetcher-promise)
 
 This is a fork of [nibe-fetcher](https://github.com/z0mt3c/nibe-fetcher) by [z0mt3c](https://github.com/z0mt3c). 
 
 This fork aims for zero dependencies(node native modules) and promise based to work with NIBE uplink API v1 and the as of 2024 the newer API of myUplink (APIv2). The v1 API is to be replaced after summer 2024.
-
-**Note that APIv2 is not fully developed as I don't have a test system available yet. See separate branch** https://github.com/zinen/node-nibe-fetcher-promise/tree/myuplink2024
 
 Zero dependencies so I don't have to update this module every so often and promise based as I like JS async/await way of coding.
 
